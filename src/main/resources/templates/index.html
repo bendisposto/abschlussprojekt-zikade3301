@@ -102,6 +102,7 @@
             </div>
         </form>
 
+
         <form method="GET" th:action="@{/module/pdf}" style="margin-left: 2%; width: 18%">
             <button type="submit" id="pdf-button">
                 <i class="fa fa-file-pdf-o" style="font-size:48px;color:red"></i>
@@ -111,24 +112,51 @@
 
     <!------ Navigationbar für die Semesterauswahl-------->
     <p>
-    <ul class="nav nav-tabs">
-
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{'/module/'}" style="background: white; color: #696969">Alle Module</a>
-        </li>
-        <div th:each="semester: ${nextSemesters}">
+    <div th:if="${clickedSemester != null}">
+    <ul class="nav nav-tabs" role="tablist">
+        <div th:if="${clickedSemester.equals('')}">
             <li class="nav-item">
-                <a class="nav-link" th:text="${semester}" th:href="@{'/module/semester/' + ${semester}}"
-                   style="background: white; color: dimgray"> Semester </a>
+                <a class="nav-link active" role="tab" th:href="@{'/module/'}" style="background: white; color: #696969">Alle
+                    Module</a>
             </li>
         </div>
-
+        <div th:unless="${clickedSemester.equals('')}">
+            <li class="nav-item">
+                <a class="nav-link" role="tab" th:href="@{'/module/'}" style="background: white; color: #696969">Alle
+                    Module</a>
+            </li>
+        </div>
+        <a th:each="semester2: ${nextSemesters}">
+            <div th:if="${clickedSemester.equals(semester2)}">
+                <li class="nav-item ">
+                    <a class="nav-link active" role="tab" th:text="${semester2}"
+                       th:href="@{'/semester/' + ${semester2}}"
+                       style="background: white; color: dimgray"> Semester </a>
+                </li>
+            </div>
+            <div th:unless="${clickedSemester.equals(semester2)}">
+                <li class="nav-item ">
+                    <a class="nav-link " role="tab" th:text="${semester2}"
+                       th:href="@{'/semester/' + ${semester2}}"
+                       style="background: white; color: dimgray"> Semester </a>
+                </li>
+            </div>
+        </a>
     </ul>
+</div>
     </p>
 
 
     <div class="alert alert-secondary" role="alert" th:if="${semester != null}">
-        <h4> Im
+        <h4>
+            <svg class="bi bi-info-circle" width="2em" height="2em" viewBox="0 0 16 16" fill="green"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z"
+                      clip-rule="evenodd"/>
+                <path d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z"/>
+                <circle cx="8" cy="4.5" r="1"/>
+            </svg>
+            &nbsp; &nbsp; Im
             <span th:text="${semester}"> Semester </span>
             finden
             <span th:text="${anzahlBachelormodule}" style="font-weight: bold"> 0 </span>
@@ -138,6 +166,7 @@
             <span style="font-weight: bold"> Mastermodule </span>
             statt
         </h4>
+
     </div>
 
     <!--<h4>Hinweis: Die mit <span style="color: lightgreen; background-color: lightslategrey;">&nbsp;markdown&nbsp;</span> markierten Felder unterstützen auch Eingaben im

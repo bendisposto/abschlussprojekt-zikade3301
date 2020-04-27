@@ -22,10 +22,11 @@ import java.util.List;
 @Controller
 @SessionScope
 @RequiredArgsConstructor
-@RequestMapping("/module")
+@RequestMapping("")
 public class IndexController {
 
     private final ModulService modulService;
+
 
     /**
      * Index string.
@@ -34,14 +35,16 @@ public class IndexController {
      * @param model Model für die HTML-Datei.
      * @return View Index
      */
-    @GetMapping("")
+    @GetMapping("/module")
     public String index(KeycloakAuthenticationToken token, Model model) {
         if (token != null) {
             model.addAttribute("account", createAccountFromPrincipal(token));
         }
+
         model.addAttribute("allModules", modulService.getAllSichtbareModule());
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
+        model.addAttribute("clickedSemester", "");
         return "index";
     }
 
@@ -86,10 +89,10 @@ public class IndexController {
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
         model.addAttribute("anzahlBachelormodule",modulService.getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Bachelor-Studiengang Informatik")).count());
         model.addAttribute("anzahlMastermodule",modulService.getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Master-Studiengang Informatik")).count());
+        model.addAttribute("clickedSemester", semester);
 
-        System.out.println(
-        );
         System.out.println(semester);
+
         return "index";
     }
 
