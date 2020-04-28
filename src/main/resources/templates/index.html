@@ -130,14 +130,14 @@
             <div th:if="${clickedSemester.equals(semester2)}">
                 <li class="nav-item ">
                     <a class="nav-link active" role="tab" th:text="${semester2}"
-                       th:href="@{'/semester/' + ${semester2}}"
+                       th:href="@{'/module/semester/' + ${semester2}}"
                        style="background: white; color: dimgray"> Semester </a>
                 </li>
             </div>
             <div th:unless="${clickedSemester.equals(semester2)}">
                 <li class="nav-item ">
                     <a class="nav-link " role="tab" th:text="${semester2}"
-                       th:href="@{'/semester/' + ${semester2}}"
+                       th:href="@{'/module/semester/' + ${semester2}}"
                        style="background: white; color: dimgray"> Semester </a>
                 </li>
             </div>

@@ -22,7 +22,7 @@ import java.util.List;
 @Controller
 @SessionScope
 @RequiredArgsConstructor
-@RequestMapping("")
+@RequestMapping("/module")
 public class IndexController {
 
     private final ModulService modulService;
@@ -35,7 +35,7 @@ public class IndexController {
      * @param model Model für die HTML-Datei.
      * @return View Index
      */
-    @GetMapping("/module")
+    @GetMapping("")
     public String index(KeycloakAuthenticationToken token, Model model) {
         if (token != null) {
             model.addAttribute("account", createAccountFromPrincipal(token));
