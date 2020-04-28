@@ -112,38 +112,22 @@
 
     <!------ Navigationbar für die Semesterauswahl-------->
     <p>
-    <div th:if="${clickedSemester != null}">
+
     <ul class="nav nav-tabs" role="tablist">
-        <div th:if="${clickedSemester.equals('')}">
-            <li class="nav-item">
-                <a class="nav-link active" role="tab" th:href="@{'/module/'}" style="background: white; color: #696969">Alle
-                    Module</a>
+        <li class="nav-item">
+            <a th:class="${activeSemester.isActive() ? 'nav-link' : 'nav-link active'}" role="tab" th:href="@{'/module/'}"
+               style="background: white; color: #696969">Alle
+                Module</a>
+        </li>
+        <a th:each="semester: ${nextSemesters}">
+            <li class="nav-item ">
+                <a th:class="${semester.equals(activeSemester.semester) ? 'nav-link active' : 'nav-link'}" role="tab"
+                   th:text="${semester}"
+                   th:href="@{'/module/semester/' + ${semester}}"
+                   style="background: white; color: dimgray"> Semester </a>
             </li>
-        </div>
-        <div th:unless="${clickedSemester.equals('')}">
-            <li class="nav-item">
-                <a class="nav-link" role="tab" th:href="@{'/module/'}" style="background: white; color: #696969">Alle
-                    Module</a>
-            </li>
-        </div>
-        <a th:each="semester2: ${nextSemesters}">
-            <div th:if="${clickedSemester.equals(semester2)}">
-                <li class="nav-item ">
-                    <a class="nav-link active" role="tab" th:text="${semester2}"
-                       th:href="@{'/module/semester/' + ${semester2}}"
-                       style="background: white; color: dimgray"> Semester </a>
-                </li>
-            </div>
-            <div th:unless="${clickedSemester.equals(semester2)}">
-                <li class="nav-item ">
-                    <a class="nav-link " role="tab" th:text="${semester2}"
-                       th:href="@{'/module/semester/' + ${semester2}}"
-                       style="background: white; color: dimgray"> Semester </a>
-                </li>
-            </div>
         </a>
     </ul>
-</div>
     </p>
 
 

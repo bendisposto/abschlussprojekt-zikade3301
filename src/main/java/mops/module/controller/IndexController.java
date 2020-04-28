@@ -2,8 +2,9 @@ package mops.module.controller;
 
 import static mops.module.keycloak.KeycloakMopsAccount.createAccountFromPrincipal;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import mops.module.database.Modul;
 import mops.module.database.Modulkategorie;
 import mops.module.services.ModulService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.annotation.SessionScope;
-
-import java.util.Arrays;
-import java.util.List;
 
 
 @Controller
@@ -44,16 +42,17 @@ public class IndexController {
         model.addAttribute("allModules", modulService.getAllSichtbareModule());
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
-        model.addAttribute("clickedSemester", "");
+        model.addAttribute("activeSemester", new activeSemesterTab(false, ""));
+
         return "index";
     }
 
     /**
      * Moduldetails string.
      *
-     * @param id the modul id
-     * @param token   the token of keycloak for permissions.
-     * @param model   the model of keycloak for permissions.
+     * @param id    the modul id
+     * @param token the token of keycloak for permissions.
+     * @param model the model of keycloak for permissions.
      * @return the string "moduldetails" for the selected module.
      */
     @RequestMapping(value = "/moduldetails/{id}", method = RequestMethod.GET)
@@ -72,8 +71,8 @@ public class IndexController {
      * Semesteransicht string.
      *
      * @param semester the corresponding semester
-     * @param token   the token of keycloak for permissions.
-     * @param model   the model of keycloak for permissions.
+     * @param token    the token of keycloak for permissions.
+     * @param model    the model of keycloak for permissions.
      * @return the string "index" with modules in the selected semester.
      */
     @RequestMapping(value = "/semester/{semester}", method = RequestMethod.GET)
@@ -87,11 +86,19 @@ public class IndexController {
         model.addAttribute("allModules", modulService.getModuleBySemester(semester));
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
-        model.addAttribute("anzahlBachelormodule",modulService.getAnzahlBachelormoduleBySemester(semester));
-        model.addAttribute("anzahlMastermodule",modulService.getAnzahlMastermoduleBySemester(semester));
-        model.addAttribute("clickedSemester", semester);
+        model.addAttribute("anzahlBachelormodule", modulService.getAnzahlBachelormoduleBySemester(semester));
+        model.addAttribute("anzahlMastermodule", modulService.getAnzahlMastermoduleBySemester(semester));
+        model.addAttribute("activeSemester", new activeSemesterTab(true, semester));
 
         return "index";
+    }
+
+
+    @AllArgsConstructor
+    @Data
+    class activeSemesterTab {
+        boolean active;
+        String semester;
     }
 
 }
