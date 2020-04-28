@@ -351,4 +351,17 @@ public class ModulService {
         modulSnapshotRepository.save(getModulById(modulId));
     }
 
+    public long getAnzahlBachelormoduleBySemester(String semester){
+        return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Bachelor-Studiengang Informatik")).count();
+    }
+
+    public long getAnzahlMastermoduleBySemester(String semester){
+        return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Master-Studiengang Informatik")).count();
+    }
+
+
+
+    
+
+
 }

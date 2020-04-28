@@ -87,8 +87,8 @@ public class IndexController {
         model.addAttribute("allModules", modulService.getModuleBySemester(semester));
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
-        model.addAttribute("anzahlBachelormodule",modulService.getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Bachelor-Studiengang Informatik")).count());
-        model.addAttribute("anzahlMastermodule",modulService.getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Master-Studiengang Informatik")).count());
+        model.addAttribute("anzahlBachelormodule",modulService.getAnzahlBachelormoduleBySemester(semester));
+        model.addAttribute("anzahlMastermodule",modulService.getAnzahlMastermoduleBySemester(semester));
         model.addAttribute("clickedSemester", semester);
 
         System.out.println(semester);
