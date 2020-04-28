@@ -351,10 +351,20 @@ public class ModulService {
         modulSnapshotRepository.save(getModulById(modulId));
     }
 
+    /**
+     * Bestimmt die Anzahl an Bachelormodulen, die in einem bestimmten Semester angeboten werden
+     *
+     * @param semester Semester, für welches die Anzahl an Bachelormodulen bestimmt werden soll
+     */
     public long getAnzahlBachelormoduleBySemester(String semester){
         return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Bachelor-Studiengang Informatik")).count();
     }
 
+    /**
+     * Bestimmt die Anzahl an Mastermodulen, die in einem bestimmten Semester angeboten werden
+     *
+     * @param semester Semester, für welches die Anzahl an Mastermodulen bestimmt werden soll
+     */
     public long getAnzahlMastermoduleBySemester(String semester){
         return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Master-Studiengang Informatik")).count();
     }

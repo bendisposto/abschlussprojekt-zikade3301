@@ -91,8 +91,6 @@ public class IndexController {
         model.addAttribute("anzahlMastermodule",modulService.getAnzahlMastermoduleBySemester(semester));
         model.addAttribute("clickedSemester", semester);
 
-        System.out.println(semester);
-
         return "index";
     }
 
