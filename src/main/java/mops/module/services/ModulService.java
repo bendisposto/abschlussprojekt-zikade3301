@@ -360,21 +360,13 @@ public class ModulService {
     }
 
     /**
-     * Bestimmt die Anzahl an Bachelormodulen, die in einem bestimmten Semester angeboten werden
+     * Bestimmt die Anzahl an Modulen, die in einem bestimmten Semester eines Studiengangs angeboten werden
      *
-     * @param semester Semester, für welches die Anzahl an Bachelormodulen bestimmt werden soll
+     * @param semester Semester, für welches die Anzahl an Modulen bestimmt werden soll
+     * @param studiengang Studiengang, für welchen die Anzahl an Modulen bestimmt werden soll
      */
-    public long getAnzahlBachelormoduleBySemester(String semester) {
-        return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Bachelor-Studiengang Informatik")).count();
-    }
-
-    /**
-     * Bestimmt die Anzahl an Mastermodulen, die in einem bestimmten Semester angeboten werden
-     *
-     * @param semester Semester, für welches die Anzahl an Mastermodulen bestimmt werden soll
-     */
-    public long getAnzahlMastermoduleBySemester(String semester) {
-        return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Master-Studiengang Informatik")).count();
+    public long getAnzahlModuleBySemesterAndStudiengang(String semester, String studiengang) {
+        return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals(studiengang)).count();
     }
 
     /**

@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import mops.module.database.Modul;
 import mops.module.database.Modulkategorie;
 import mops.module.services.ModulService;
@@ -126,6 +127,7 @@ class IndexControllerTest {
         testModul.setModulkategorie(Modulkategorie.PFLICHT_INFO);
 
         when(modulService.getModuleBySemester("WiSe2019-20")).thenReturn(Arrays.asList(testModul));
+        when(modulService.getAllVisibleCategories("WiSe2019-20")).thenReturn(Arrays.asList(Modulkategorie.PFLICHT_INFO));
 
         mvc.perform(get("/module/semester/WiSe2019-20"))
                 .andExpect(content().string(containsString("Testmodul")));

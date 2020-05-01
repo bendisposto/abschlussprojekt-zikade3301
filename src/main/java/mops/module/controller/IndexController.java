@@ -5,7 +5,6 @@ import static mops.module.keycloak.KeycloakMopsAccount.createAccountFromPrincipa
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import mops.module.database.Modul;
 import mops.module.database.Modulkategorie;
 import mops.module.services.ModulService;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
@@ -16,10 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.annotation.SessionScope;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -92,8 +87,8 @@ public class IndexController {
         model.addAttribute("allModules", modulService.getModuleBySemester(semester));
         model.addAttribute("allCategories", modulService.getAllVisibleCategories(semester));
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
-        model.addAttribute("anzahlBachelormodule", modulService.getAnzahlBachelormoduleBySemester(semester));
-        model.addAttribute("anzahlMastermodule", modulService.getAnzahlMastermoduleBySemester(semester));
+        model.addAttribute("anzahlBachelormodule", modulService.getAnzahlModuleBySemesterAndStudiengang(semester, "Bachelor-Studiengang Informatik"));
+        model.addAttribute("anzahlMastermodule", modulService.getAnzahlModuleBySemesterAndStudiengang(semester, "Master-Studiengang Informatik"));
         model.addAttribute("activeSemester", new activeSemesterTab(true, semester));
         return "index";
     }
