@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Antrag;
 import mops.module.database.Modul;
+import mops.module.database.Modulkategorie;
 import mops.module.database.Veranstaltung;
 import mops.module.repositories.AntragRepository;
 import mops.module.repositories.ModulSnapshotRepository;
@@ -36,7 +38,7 @@ public class ModulService {
      * @param oldModul Altes Modul
      * @param newModul Neues Modul
      * @return Ein Änderungsmodul, bei dem ein Feld ohne Änderung den Wert null hat und
-     *         ein Feld mit einem Wert den neuen Wert nach der Änderung enthält.
+     * ein Feld mit einem Wert den neuen Wert nach der Änderung enthält.
      */
     public static Modul calculateModulDiffs(Modul oldModul, Modul newModul) {
         Modul changes = new Modul();
@@ -83,9 +85,10 @@ public class ModulService {
         return false;
     }
 
-    /**Diese Methode wendet Änderungen in Form eines Antrages auf ein Modul an.
+    /**
+     * Diese Methode wendet Änderungen in Form eines Antrages auf ein Modul an.
      *
-     * @param modul auf das die Änderungen aus dem Antrag angewendet werden sollen.
+     * @param modul  auf das die Änderungen aus dem Antrag angewendet werden sollen.
      * @param antrag der die Änderungen beinhaltet.
      */
 
@@ -190,6 +193,7 @@ public class ModulService {
     /**
      * Sortiert die übergebenen Semester und gibt nur diese zurück,
      * die auch in der Semestersuche auswählbar sind.
+     *
      * @param semesters Semester, die sortiert und gefiltert werden sollen
      * @return Gefilterte und sortierte Liste von Semestern
      */
@@ -201,17 +205,18 @@ public class ModulService {
     /**
      * Sortiert die übergebenen Semester und gibt nur diese zurück,
      * die im angegebenen Rahmen liegen.
+     *
      * @param semesters Semester, die sortiert und gefiltert werden sollen
-     * @param when Zeitpunkt, auf den sich die Filterung bezieht
+     * @param when      Zeitpunkt, auf den sich die Filterung bezieht
      * @param pastCount Anzahl der Semester vor when, die im Zeitrahmen liegen sollen
      * @param nextCount Anzahl der Semester nach when, die im Zeitrahmen liegen sollen
      *                  (inklusive dem aktuellen Semester)
      * @return Gefilterte und sortierte Liste von Semestern
      */
     public static List<String> filterSemesters(Collection<String> semesters,
-                                                        LocalDateTime when,
-                                                        int pastCount,
-                                                        int nextCount) {
+                                               LocalDateTime when,
+                                               int pastCount,
+                                               int nextCount) {
         List<String> intersectSemesters = getPastAndNextSemesters(when, pastCount, nextCount);
         return intersectSemesters
                 .stream()
@@ -222,6 +227,7 @@ public class ModulService {
     /**
      * Ruft getPastAndNextSemesters mit now und den voreingestellten Konstanten
      * für das Taggen von Semestern auf.
+     *
      * @return Liste von Semestern
      */
     public static List<String> getPastAndNextSemestersForTagging() {
@@ -233,6 +239,7 @@ public class ModulService {
     /**
      * Ruft getPastAndNextSemesters mit now und den voreingestellten Konstanten
      * für die Suche nach Semestern auf.
+     *
      * @return Liste von Semestern
      */
     public static List<String> getPastAndNextSemestersForSearch() {
@@ -315,7 +322,8 @@ public class ModulService {
         return firstYear + "-" + secondYear;
     }
 
-    /**Kopiert ein Modul.
+    /**
+     * Kopiert ein Modul.
      *
      * @param oldModul Das zu kopierende Modul.
      * @param newModul Die Kopie.
@@ -356,7 +364,7 @@ public class ModulService {
      *
      * @param semester Semester, für welches die Anzahl an Bachelormodulen bestimmt werden soll
      */
-    public long getAnzahlBachelormoduleBySemester(String semester){
+    public long getAnzahlBachelormoduleBySemester(String semester) {
         return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Bachelor-Studiengang Informatik")).count();
     }
 
@@ -365,13 +373,20 @@ public class ModulService {
      *
      * @param semester Semester, für welches die Anzahl an Mastermodulen bestimmt werden soll
      */
-    public long getAnzahlMastermoduleBySemester(String semester){
+    public long getAnzahlMastermoduleBySemester(String semester) {
         return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals("Master-Studiengang Informatik")).count();
     }
 
-
-
-    
-
-
+    /**
+     * Gibt alle Modulkategorien der in einem bestimmten Semester stattfindenden Module zurück
+     *
+     * @param semester Semester, für welches die Modulkategorie bestimmt werden soll
+     */
+    public List<Modulkategorie> getAllVisibleCategories(String semester) {
+        return getModuleBySemester(semester)
+                .parallelStream()
+                .map(x->x.getModulkategorie())
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }
