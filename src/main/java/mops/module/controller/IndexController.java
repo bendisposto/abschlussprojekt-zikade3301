@@ -42,7 +42,7 @@ public class IndexController {
         model.addAttribute("allModules", modulService.getAllSichtbareModule());
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
-        model.addAttribute("activeSemester", new activeSemesterTab(false, ""));
+        model.addAttribute("activeSemester", new ActiveSemesterTab(false, ""));
 
         return "index";
     }
@@ -87,16 +87,22 @@ public class IndexController {
         model.addAttribute("allModules", modulService.getModuleBySemester(semester));
         model.addAttribute("allCategories", modulService.getAllVisibleCategories(semester));
         model.addAttribute("nextSemesters", ModulService.getPastAndNextSemestersForSearch());
-        model.addAttribute("anzahlBachelormodule", modulService.getAnzahlModuleBySemesterAndStudiengang(semester, "Bachelor-Studiengang Informatik"));
-        model.addAttribute("anzahlMastermodule", modulService.getAnzahlModuleBySemesterAndStudiengang(semester, "Master-Studiengang Informatik"));
-        model.addAttribute("activeSemester", new activeSemesterTab(true, semester));
+        model.addAttribute("anzahlBachelormodule",
+                modulService.getAnzahlModuleBySemesterAndStudiengang(
+                        semester,
+                        "Bachelor-Studiengang Informatik"));
+        model.addAttribute("anzahlMastermodule",
+                modulService.getAnzahlModuleBySemesterAndStudiengang(
+                        semester,
+                        "Master-Studiengang Informatik"));
+        model.addAttribute("activeSemester", new ActiveSemesterTab(true, semester));
         return "index";
     }
 
 
     @AllArgsConstructor
     @Data
-    class activeSemesterTab {
+    class ActiveSemesterTab {
         boolean active;
         String semester;
     }

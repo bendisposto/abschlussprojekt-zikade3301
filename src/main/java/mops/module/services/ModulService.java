@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Antrag;
 import mops.module.database.Modul;
@@ -38,7 +37,7 @@ public class ModulService {
      * @param oldModul Altes Modul
      * @param newModul Neues Modul
      * @return Ein Änderungsmodul, bei dem ein Feld ohne Änderung den Wert null hat und
-     * ein Feld mit einem Wert den neuen Wert nach der Änderung enthält.
+     *      ein Feld mit einem Wert den neuen Wert nach der Änderung enthält.
      */
     public static Modul calculateModulDiffs(Modul oldModul, Modul newModul) {
         Modul changes = new Modul();
@@ -113,6 +112,7 @@ public class ModulService {
 
     public List<Modul> getAllModule() {
         return StreamSupport.stream(modulSnapshotRepository.findAll().spliterator(), false)
+                .sorted((x1, x2) -> {return x1.getTitelDeutsch().compareTo(x2.getTitelDeutsch());})
                 .collect(Collectors.toList());
     }
 
@@ -360,24 +360,28 @@ public class ModulService {
     }
 
     /**
-     * Bestimmt die Anzahl an Modulen, die in einem bestimmten Semester eines Studiengangs angeboten werden
+     * Bestimmt die Anzahl an Modulen,
+     * die in einem bestimmten Semester eines Studiengangs angeboten werden.
      *
-     * @param semester Semester, für welches die Anzahl an Modulen bestimmt werden soll
-     * @param studiengang Studiengang, für welchen die Anzahl an Modulen bestimmt werden soll
+     * @param semester      Semester, für welches die Anzahl an Modulen bestimmt werden soll
+     * @param studiengang   Studiengang, für welchen die Anzahl an Modulen bestimmt werden soll
      */
     public long getAnzahlModuleBySemesterAndStudiengang(String semester, String studiengang) {
-        return getModuleBySemester(semester).stream().filter(m -> m.getStudiengang().equals(studiengang)).count();
+        return getModuleBySemester(semester)
+                .stream()
+                .filter(m -> m.getStudiengang().equals(studiengang))
+                .count();
     }
 
     /**
-     * Gibt alle Modulkategorien der in einem bestimmten Semester stattfindenden Module zurück
+     * Gibt alle Modulkategorien der in einem bestimmten Semester stattfindenden Module zurück.
      *
      * @param semester Semester, für welches die Modulkategorie bestimmt werden soll
      */
     public List<Modulkategorie> getAllVisibleCategories(String semester) {
         return getModuleBySemester(semester)
                 .parallelStream()
-                .map(x->x.getModulkategorie())
+                .map(x -> x.getModulkategorie())
                 .distinct()
                 .collect(Collectors.toList());
     }

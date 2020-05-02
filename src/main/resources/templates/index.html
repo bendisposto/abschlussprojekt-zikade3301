@@ -182,13 +182,13 @@
                 <ul style="font-size: large; list-style-type: none">
                     <li th:each="modul : ${allModules}">
                         <div th:if="${modul.getModulkategorie().equals(category)}">
-                            <span style="width: min-content"
-                                  class="badge badge-dark mr-2"
-                                  th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
                             <a th:href="@{'/module/moduldetails/' + ${modul.getId()}}"
                                th:text="${modul.getTitelDeutsch()}">
                                 Modulname
                             </a>
+                            <span style="width: min-content"
+                                  class="badge badge-secondary mr-2"
+                                  th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
                         </div>
                     </li>
                 </ul>
