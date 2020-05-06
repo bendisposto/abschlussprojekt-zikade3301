@@ -101,8 +101,6 @@
                        id="searchField">
             </div>
         </form>
-
-
         <form method="GET" th:action="@{/module/pdf}" style="margin-left: 2%; width: 18%">
             <button type="submit" id="pdf-button">
                 <i class="fa fa-file-pdf-o" style="font-size:48px;color:red"></i>
@@ -111,10 +109,8 @@
     </div>
 
     <!------ Navigationbar für die Semesterauswahl-------->
-
     <div th:if="${activeSemester != null}">
         <p>
-
         <ul class="nav nav-tabs" role="tablist">
             <li class="nav-item">
                 <a th:class="${activeSemester.isActive() ? 'nav-link' : 'nav-link active'}" role="tab"
@@ -134,7 +130,6 @@
         </ul>
         </p>
     </div>
-
     <div class="alert alert-secondary" role="alert" th:if="${semester != null}">
         <h4>
             <svg class="bi bi-info-circle" width="2em" height="2em" viewBox="0 0 16 16" fill="green"
@@ -154,13 +149,7 @@
             <span style="font-weight: bold"> Mastermodule </span>
             statt
         </h4>
-
     </div>
-
-    <!--<h4>Hinweis: Die mit <span style="color: lightgreen; background-color: lightslategrey;">&nbsp;markdown&nbsp;</span> markierten Felder unterstützen auch Eingaben im
-        <a href="http://de.wikipedia.org/wiki/Markdown">Markdown</a>-Format</h4>-->
-
-
     <div th:each="category : ${allCategories}">
         <p>
             <a class="btn btn-primary"
@@ -188,14 +177,13 @@
                             </a>
                             <span style="width: min-content"
                                   class="badge badge-secondary mr-2"
-                                  th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
+                                  th:text="${modul.getGesamtLeistungspunkte()}">CP
+                            </span>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
-
-
     </div>
 </main>
 </body>

@@ -90,7 +90,6 @@ public class ModulService {
      * @param modul  auf das die Änderungen aus dem Antrag angewendet werden sollen.
      * @param antrag der die Änderungen beinhaltet.
      */
-
     public static void applyAntragOnModul(Modul modul, Antrag antrag) {
         Modul modulChanges = JsonService.jsonObjectToModul(antrag.getJsonModulAenderung());
 
@@ -112,7 +111,8 @@ public class ModulService {
 
     public List<Modul> getAllModule() {
         return StreamSupport.stream(modulSnapshotRepository.findAll().spliterator(), false)
-                .sorted((x1, x2) -> {return x1.getTitelDeutsch().compareTo(x2.getTitelDeutsch());})
+                .sorted((x1, x2) -> {
+                    return x1.getTitelDeutsch().compareTo(x2.getTitelDeutsch()); })
                 .collect(Collectors.toList());
     }
 
@@ -328,7 +328,6 @@ public class ModulService {
      * @param oldModul Das zu kopierende Modul.
      * @param newModul Die Kopie.
      */
-
     public static void copyModul(Modul oldModul, Modul newModul) {
 
         for (Field field : oldModul.getClass().getDeclaredFields()) {
