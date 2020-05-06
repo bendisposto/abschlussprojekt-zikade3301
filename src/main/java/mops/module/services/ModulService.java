@@ -109,6 +109,11 @@ public class ModulService {
         }
     }
 
+    /**
+     * Gibt alle Module, nach Titel sortiert, zurück.
+     *
+     * @return alle Module in sortierter Reihenfolge
+     */
     public List<Modul> getAllModule() {
         return StreamSupport.stream(modulSnapshotRepository.findAll().spliterator(), false)
                 .sorted((x1, x2) -> {
