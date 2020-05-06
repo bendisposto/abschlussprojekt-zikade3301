@@ -2,18 +2,14 @@ package mops.module.controllertests;
 
 import static mops.module.controllertests.AuthenticationTokenGenerator.generateAuthenticationToken;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import mops.module.database.Modul;
 import mops.module.database.Veranstaltung;
@@ -30,8 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -51,7 +45,7 @@ class SemesterTagControllerTest {
     @MockBean
     VeranstaltungService veranstaltungService;
 
-    private Modul testmodul;
+    private Modul testModul;
     private Veranstaltung testVeranstaltung;
 
     @BeforeEach
@@ -61,21 +55,20 @@ class SemesterTagControllerTest {
                 .apply(springSecurity())
                 .build();
 
-        testmodul = ModulFaker.generateFakeModul();
-        testmodul.setId((long) 3301);
-        testVeranstaltung = testmodul
+        testModul = ModulFaker.generateFakeModul();
+        testModul.setId((long) 3301);
+        testVeranstaltung = testModul
                 .getVeranstaltungen()
                 .stream()
                 .findFirst()
                 .orElse(null);
+
         if (testVeranstaltung == null) {
             setUp();
         } else {
             testVeranstaltung.setId(1L);
             testVeranstaltung.setSemester(Collections.singleton("SoSe1995"));
         }
-
-
     }
 
     private final String expect = "redirect:/module/modulbeauftragter";
@@ -87,14 +80,10 @@ class SemesterTagControllerTest {
                 .getContext()
                 .setAuthentication(generateAuthenticationToken("sekretariat"));
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        List<String> veranstaltungsIds = Arrays.asList("1");
-        params.addAll("veranstaltungsIds", veranstaltungsIds);
-
-        when(veranstaltungService.getVeranstaltungById(Long.parseLong(veranstaltungsIds.get(0)))).thenReturn(testVeranstaltung);
+        when(veranstaltungService.getVeranstaltungById(Long.parseLong("1"))).thenReturn(testVeranstaltung);
 
         mvc.perform(post("/module/semesterTag/create")
-                .params(params)
+                .param("veranstaltungsIds", "1")
                 .param("semester", "SoSe2020"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name(expect));
@@ -103,14 +92,10 @@ class SemesterTagControllerTest {
     @Test
     void testSemesterTagNoAccessIfNotLoggedIn() {
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        List<String> veranstaltungsIds = Arrays.asList("1");
-        params.addAll("veranstaltungsIds", veranstaltungsIds);
-
         assertThrows(AssertionError.class,
                 () -> {
                     mvc.perform(post("/module/semesterTag/create")
-                            .params(params)
+                            .param("veranstaltungsIds", "1")
                             .param("semester", "SoSe2020"))
                             .andExpect(status().is3xxRedirection())
                             .andExpect(view().name(expect));
@@ -123,14 +108,10 @@ class SemesterTagControllerTest {
                 .getContext()
                 .setAuthentication(generateAuthenticationToken("orga"));
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        List<String> veranstaltungsIds = Arrays.asList("1");
-        params.addAll("veranstaltungsIds", veranstaltungsIds);
-
         assertThrows(AssertionError.class,
                 () -> {
                     mvc.perform(post("/module/semesterTag/create")
-                            .params(params)
+                            .param("veranstaltungsIds", "1")
                             .param("semester", "SoSe2020"))
                             .andExpect(status().is3xxRedirection())
                             .andExpect(view().name(expect));
@@ -143,14 +124,10 @@ class SemesterTagControllerTest {
                 .getContext()
                 .setAuthentication(generateAuthenticationToken("studentin"));
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        List<String> veranstaltungsIds = Arrays.asList("1");
-        params.addAll("veranstaltungsIds", veranstaltungsIds);
-
         assertThrows(AssertionError.class,
                 () -> {
                     mvc.perform(post("/module/semesterTag/create")
-                            .params(params)
+                            .param("veranstaltungsIds", "1")
                             .param("semester", "SoSe2020"))
                             .andExpect(status().is3xxRedirection())
                             .andExpect(view().name(expect));
@@ -158,19 +135,15 @@ class SemesterTagControllerTest {
     }
 
     @Test
-    void testSemesterTagCallsTagVeranstaltungSemester() throws Exception {
+    void testSemesterTagCallsTagVeranstaltungSemesterWithSingleVeranstaltung() throws Exception {
         SecurityContextHolder
                 .getContext()
                 .setAuthentication(generateAuthenticationToken("sekretariat"));
 
-        List<String> veranstaltungsIds = Arrays.asList("1");
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.addAll("veranstaltungsIds", veranstaltungsIds);
-
-        when(veranstaltungService.getVeranstaltungById(Long.parseLong(veranstaltungsIds.get(0)))).thenReturn(testVeranstaltung);
+        when(veranstaltungService.getVeranstaltungById(Long.parseLong("1"))).thenReturn(testVeranstaltung);
 
         mvc.perform(post("/module/semesterTag/create")
-                .params(params)
+                .param("veranstaltungsIds", "1")
                 .param("semester", "SoSe2020"));
         verify(modulServiceMock)
                 .tagVeranstaltungSemester(
@@ -178,6 +151,34 @@ class SemesterTagControllerTest {
                         Long.parseLong("1"),
                         Long.parseLong("3301")
                 );
+    }
+
+    @Test
+    void testSemesterTagCallsTagVeranstaltungSemesterWithThreeVeranstaltungen() throws Exception {
+        SecurityContextHolder
+                .getContext()
+                .setAuthentication(generateAuthenticationToken("sekretariat"));
+
+        List<String> veranstaltungsIds = Arrays.asList("1", "2", "3");
+
+        when(veranstaltungService.getVeranstaltungById(Long.parseLong("1"))).thenReturn(testVeranstaltung);
+        when(veranstaltungService.getVeranstaltungById(Long.parseLong("2"))).thenReturn(testVeranstaltung);
+        when(veranstaltungService.getVeranstaltungById(Long.parseLong("3"))).thenReturn(testVeranstaltung);
+
+        mvc.perform(post("/module/semesterTag/create")
+                .param("veranstaltungsIds", "1")
+                .param("veranstaltungsIds", "2")
+                .param("veranstaltungsIds", "3")
+                .param("semester", "SoSe2020"));
+
+        for(String s : veranstaltungsIds){
+            verify(modulServiceMock)
+                    .tagVeranstaltungSemester(
+                            "SoSe2020",
+                            Long.parseLong(s),
+                            Long.parseLong("3301")
+                    );
+        }
     }
 
     @Test
