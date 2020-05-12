@@ -41,17 +41,22 @@ public class SemesterTagController {
             KeycloakAuthenticationToken token) {
 
         model.addAttribute("account", createAccountFromPrincipal(token));
-        for (String veranstaltungsId : veranstaltungsIds) {
-            Veranstaltung veranstaltung =
-                    veranstaltungService.getVeranstaltungById(Long.parseLong(veranstaltungsId));
-            Long modulId = veranstaltung.getModul().getId();
-            modulService.tagVeranstaltungSemester(
-                    semester,
-                    Long.parseLong(veranstaltungsId),
-                    modulId);
+        //Ersten Eintrag ignorieren
+        veranstaltungsIds.remove("-1");
+        if (veranstaltungsIds != null) {
+            for (String veranstaltungsId : veranstaltungsIds) {
+                Veranstaltung veranstaltung =
+                        veranstaltungService.getVeranstaltungById(Long.parseLong(veranstaltungsId));
+                Long modulId = veranstaltung.getModul().getId();
+                modulService.tagVeranstaltungSemester(
+                        semester,
+                        Long.parseLong(veranstaltungsId),
+                        modulId);
+            }
         }
         return "redirect:/module/modulbeauftragter";
     }
+
 
     /**
      * Controller, der den Request für das Löschen eines SemesterTags entgegennimmt.
