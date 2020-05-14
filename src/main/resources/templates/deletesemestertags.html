@@ -80,12 +80,24 @@
                         </a>
                         wurden noch keine Veranstaltungen geplant.
                     </div>
+                    <form method='get' action='/module/deletesemester'>
+                            <select name="semesterTag"
+                                    class="custom-select"
+                                    id="semesterTag2" required>
+                                <option selected hidden value=""> Wählen Sie ein anderes Semester </option>
+                                <option type="submit" th:each="semester : ${allSemesters}" th:value="${semester}" th:text="${semester}"> Semester
+                                </option>
+                            </select>
+                            <div style="float: right; margin: 5px;" class="input-group-append">
+                                <button class="btn btn-outline-primary" type="submit"> Fortfahren </button>
+                            </div>
                     <a style="float: right; margin: 5px;"
                        href="/module/modulbeauftragter"
                        role="button"
                        class="btn btn-secondary">
                         Schließen
                     </a>
+                    </form>
                 </div>
                 <div th:unless="${veranstaltungen.size() == 0}">
                     <div class="alert alert-danger"

@@ -107,6 +107,9 @@ public class SemesterTagController {
         model.addAttribute("veranstaltungen",
                 veranstaltungService.getVeranstaltungenBySemester(semesterTag));
         model.addAttribute("account", createAccountFromPrincipal(token));
+
+        List<String> semesterWahl = ModulService.getPastAndNextSemestersForTagging();
+        model.addAttribute("allSemesters", semesterWahl);
         return "/deletesemestertags";
     }
 
