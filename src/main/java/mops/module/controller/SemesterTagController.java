@@ -4,6 +4,7 @@ import static mops.module.keycloak.KeycloakMopsAccount.createAccountFromPrincipa
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import mops.module.database.Modul;
 import mops.module.database.Veranstaltung;
 import mops.module.services.ModulService;
 import mops.module.services.VeranstaltungService;
@@ -11,9 +12,11 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -57,7 +60,6 @@ public class SemesterTagController {
         return "redirect:/module/modulbeauftragter";
     }
 
-
     /**
      * Controller, der den Request für das Löschen eines SemesterTags entgegennimmt.
      *
@@ -84,6 +86,56 @@ public class SemesterTagController {
                 Long.parseLong(idVeranstaltungTagDelete),
                 Long.parseLong(idModulTagDelete)
         );
+        return "redirect:/module/modulbeauftragter";
+    }
+
+    /**
+     * Mapping für das Generieren eines Modals zum löschen einer Semesterplanung.
+     *
+     * @param semesterTag              Die Semesterplanung, die angezeigt werden soll.
+     * @param model                    Model für die HTML-Datei.
+     * @param token                    Der Token von keycloak für die Berechtigung.
+     * @return Modal deletesemestertags
+     */
+    @GetMapping("/deletesemester")
+    @Secured("ROLE_sekretariat")
+    public String getDeleteSemesterplanung(
+            @RequestParam(name = "semesterTag") String semesterTag,
+            Model model,
+            KeycloakAuthenticationToken token) {
+        model.addAttribute("semester", semesterTag);
+        model.addAttribute("veranstaltungen",
+                veranstaltungService.getVeranstaltungenBySemester(semesterTag));
+        model.addAttribute("account", createAccountFromPrincipal(token));
+        return "/deletesemestertags";
+    }
+
+    /**
+     * Controller, der den Request für das Löschen einer Semesterplanung entgegennimmt.
+     *
+     * @param semesterTag              Das Semester, dessen Planung gelöscht werden soll
+     * @param model                    Model für die HTML-Datei.
+     * @param token                    Der Token von keycloak für die Berechtigung.
+     * @return View Modulbeauftragter
+     */
+    @PostMapping("/deletesemester")
+    @Secured("ROLE_sekretariat")
+    public String dropSemesterplanung(
+            @RequestParam(name = "semesterTag") String semesterTag,
+            Model model,
+            KeycloakAuthenticationToken token) {
+
+        List<Veranstaltung> veranstaltung =
+                veranstaltungService.getVeranstaltungenBySemester(semesterTag);
+
+        for (Veranstaltung v : veranstaltung) {
+            Modul modul = v.getModul();
+            modulService.deleteTagVeranstaltungSemester(
+                    semesterTag,
+                    Long.parseLong(v.getId().toString()),
+                    Long.parseLong(modul.getId().toString()));
+        }
+
         return "redirect:/module/modulbeauftragter";
     }
 }

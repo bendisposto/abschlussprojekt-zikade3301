@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{mopslayout :: html(name='Modulhandbuch', headcontent=~{:: headcontent}, navigation=~{:: navigation}, bodycontent=~{:: bodycontent})}">
+<head>
+    <meta charset="utf-8">
+    <title>Modulerstellung</title>
+    <th:block th:fragment="headcontent">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+                integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+                crossorigin="anonymous">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+                crossorigin="anonymous">
+        </script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+                crossorigin="anonymous">
+        </script>
+        <script>
+            // Diese Funktion öffnet das Modal, das das Formular beinhaltet
+            // Sie wird beim Laden dieser View automatisch aufgerufen.
+            $(document).ready(function openWhenLoadingPage() {
+                $('#ModalDeleteSemestertags').modal('show');
+            });
+        </script>
+    </th:block>
+</head>
+<body th:onload="'javascript: openWhenLoadingPage()'">
+<header>
+    <nav class="navigation navigation-secondary" is="mops-navigation" th:fragment="navigation">
+        <ul>
+            <li>
+                <a href="/module/">Übersicht</a>
+            </li>
+            <li th:if="${account}">
+                <div th:each="role: ${account.getRoles()}">
+                    <div th:switch="${role}">
+                        <a th:case="'orga'" href="/module/modulbeauftragter">Module bearbeiten</a>
+                        <div th:case="'sekretariat'">
+                            <a href="/module/modulbeauftragter">Module bearbeiten</a>
+                            <a href="/module/administrator">Anträge</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main th:fragment="bodycontent">
+    <div class="modal fade"
+         id="ModalDeleteSemestertags"
+         tabindex="-1"
+         role="dialog"
+         aria-labelledby="ModalDeleteSemestertagsLabel"
+         aria-hidden="true"
+         data-backdrop="static"
+         data-keyboard="false">
+        <div class="modal-dialog modal-lg"
+             role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title"
+                        id="ModalDeleteSemestertagsLabel">
+                        Semesterplanung löschen
+                    </h3>
+                    <a href="/module/modulbeauftragter"
+                       role="button"
+                       class="close"
+                       aria-label="Close">
+                        <span aria-hidden="true"> &times; </span>
+                    </a>
+                </div>
+                <div th:if="${veranstaltungen.size() == 0}">
+                    <div class="alert alert-danger"
+                         role="alert">
+                        Für das Semester
+                        <a style="font-weight: bold"
+                           th:text="${semester}"> SoSe2020
+                        </a>
+                        wurden noch keine Veranstaltungen geplant.
+                    </div>
+                    <a style="float: right; margin: 5px;"
+                       href="/module/modulbeauftragter"
+                       role="button"
+                       class="btn btn-secondary">
+                        Schließen
+                    </a>
+                </div>
+                <div th:unless="${veranstaltungen.size() == 0}">
+                    <div class="alert alert-danger"
+                         role="alert">
+                        Möchten Sie diese Veranstaltungen aus der Semesterplanung des
+                        <a style="font-weight: bold"
+                           th:text="${semester}"> SoSe2020
+                        </a>
+                        wirklich löschen?
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            <li style="margin-left: 2rem"
+                                th:each="veranstaltung : ${veranstaltungen}"
+                                th:text="${veranstaltung.getTitel()}">
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <form action="#" th:action="@{'/module/deletesemester'}" method="post">
+                            <input type="hidden" th:value="${semester}" id="semesterTag" name="semesterTag">
+                            <button style="float: right; margin: 5px;"
+                                    type="submit"
+                                    class="btn btn-danger">
+                                Löschen
+                            </button>
+                        </form>
+                        <a style="float: right; margin: 5px;"
+                           href="/module/modulbeauftragter"
+                           role="button"
+                           class="btn btn-secondary">
+                            Abbrechen
+                        </a>
+                    </div>
+                </div >
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
