@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>error</title>
+</head>
+<body>
+<ul>
+    <div th:each="exception : ${exceptions}">
+    <li th:text="${exception}">
+        Fehlermeldung
+    </li>
+    </div>
+</ul>
+</body>
+</html>

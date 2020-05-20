@@ -3,6 +3,9 @@ package mops.module.controller;
 import static mops.module.keycloak.KeycloakMopsAccount.createAccountFromPrincipal;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Modul;
 import mops.module.database.Veranstaltung;
@@ -12,12 +15,11 @@ import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-
+@Validated
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/module")
@@ -38,24 +40,24 @@ public class SemesterTagController {
     @PostMapping("/semesterTag/create")
     @Secured("ROLE_sekretariat")
     public String addSemesterTagToVeranstaltung(
-            @RequestParam("veranstaltungsIds") List<String> veranstaltungsIds,
-            @RequestParam("semester") String semester,
-            Model model,
-            KeycloakAuthenticationToken token) {
+            @RequestParam(value = "semester", defaultValue = "")
+            @NotEmpty(message = "Geben Sie ein gültiges Semester an!")
+                    String semester,
+            @RequestParam(value = "veranstaltungsIds", defaultValue = "")
+            @NotEmpty(message = "Wählen Sie mindestens eine Veranstaltung aus!")
+                    List<String> veranstaltungsIds,
+            Model model, KeycloakAuthenticationToken token) {
 
         model.addAttribute("account", createAccountFromPrincipal(token));
-        //Ersten Eintrag ignorieren
-        veranstaltungsIds.remove("-1");
-        if (veranstaltungsIds != null) {
-            for (String veranstaltungsId : veranstaltungsIds) {
-                Veranstaltung veranstaltung =
-                        veranstaltungService.getVeranstaltungById(Long.parseLong(veranstaltungsId));
-                Long modulId = veranstaltung.getModul().getId();
-                modulService.tagVeranstaltungSemester(
-                        semester,
-                        Long.parseLong(veranstaltungsId),
-                        modulId);
-            }
+
+        for (String veranstaltungsId : veranstaltungsIds) {
+            Veranstaltung veranstaltung =
+                    veranstaltungService.getVeranstaltungById(Long.parseLong(veranstaltungsId));
+            Long modulId = veranstaltung.getModul().getId();
+            modulService.tagVeranstaltungSemester(
+                    semester,
+                    Long.parseLong(veranstaltungsId),
+                    modulId);
         }
         return "redirect:/module/modulbeauftragter";
     }
@@ -80,7 +82,6 @@ public class SemesterTagController {
             KeycloakAuthenticationToken token) {
 
         model.addAttribute("account", createAccountFromPrincipal(token));
-
         modulService.deleteTagVeranstaltungSemester(
                 tagToDelete,
                 Long.parseLong(idVeranstaltungTagDelete),
@@ -92,9 +93,9 @@ public class SemesterTagController {
     /**
      * Mapping für das Generieren eines Modals zum löschen einer Semesterplanung.
      *
-     * @param semesterTag              Die Semesterplanung, die angezeigt werden soll.
-     * @param model                    Model für die HTML-Datei.
-     * @param token                    Der Token von keycloak für die Berechtigung.
+     * @param semesterTag Die Semesterplanung, die angezeigt werden soll.
+     * @param model       Model für die HTML-Datei.
+     * @param token       Der Token von keycloak für die Berechtigung.
      * @return Modal deletesemestertags
      */
     @GetMapping("/deletesemester")
@@ -116,9 +117,9 @@ public class SemesterTagController {
     /**
      * Controller, der den Request für das Löschen einer Semesterplanung entgegennimmt.
      *
-     * @param semesterTag              Das Semester, dessen Planung gelöscht werden soll
-     * @param model                    Model für die HTML-Datei.
-     * @param token                    Der Token von keycloak für die Berechtigung.
+     * @param semesterTag Das Semester, dessen Planung gelöscht werden soll
+     * @param model       Model für die HTML-Datei.
+     * @param token       Der Token von keycloak für die Berechtigung.
      * @return View Modulbeauftragter
      */
     @PostMapping("/deletesemester")
@@ -140,5 +141,25 @@ public class SemesterTagController {
         }
 
         return "redirect:/module/modulbeauftragter";
+    }
+
+    /**
+     * ExceptionHandler, der bei falscher Eingabe Fehlerseite zurückgibt.
+     *
+     * @param exeption Die Fehlermeldung, die durch die fehlerhafte Eingabe erzeugt wird
+     * @return View error
+     */
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleError(ConstraintViolationException exeption) {
+        ModelAndView modelAndView = new ModelAndView();
+        List<String> exceptions =
+                exeption.getConstraintViolations()
+                        .parallelStream()
+                        .map(x -> x.getMessageTemplate())
+                        .collect(Collectors.toList());
+
+        modelAndView.addObject("exceptions", exceptions);
+        modelAndView.setViewName("error");
+        return modelAndView;
     }
 }

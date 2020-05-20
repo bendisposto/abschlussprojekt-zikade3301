@@ -17,6 +17,18 @@
                 integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
                 crossorigin="anonymous">
         </script>
+        <!-- Funktion für das Modal zum Erstellen von Semestertags zur Erstellung einer Warnung,
+         wenn keine Veranstaltung ausgewählt wurde -->
+        <script type="text/javascript">
+            function val() {
+                var checkboxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                if(checkboxes == 0){
+                    var myAlert = document.getElementById('myAlert');
+                    myAlert.hidden = false;
+                    return false;
+                }
+            }
+        </script>
     </th:block>
 </head>
 <body>
@@ -42,7 +54,6 @@
 </header>
 
 <main th:fragment="bodycontent">
-
 
     <!-- Modal, um alle Versionen eines Moduls einzusehen -->
     <div class="modal fade" id="ModalVersions" tabindex="-1" role="dialog" aria-labelledby="ModalVersionsLabel"
@@ -110,7 +121,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Modal, um die Sichtbarkeit von Modulen zu bearbeiten -->
     <div class="modal fade" id="ModalVisibility" tabindex="-1" role="dialog" aria-labelledby="ModalVisibilityLabel"
@@ -222,6 +232,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                   <div class="alert alert-danger alert-dismissible fade show" id="myAlert" hidden>
+                       Wählen Sie bitte mindestens eine Veranstaltung aus!
+                   </div>
                     <div class="alert alert-dark alert-dismissible fade show">
                         Wählen Sie das Semester, welches Sie planen möchten und
                         fügen Sie durch Anhaken Veranstaltungen hinzu!
@@ -230,65 +243,70 @@
                     <form action="#" th:action="@{/module/semesterTag/create}" method="post">
                         <select name="semester"
                                 class="form-control"
-                                id="semester" required>
-                            <option selected hidden value=""> Semester planen </option>
-                            <option th:each="semester : ${allSemesters}" th:value="${semester}" th:text="${semester}"> Semester </option>
+                                id="semester"
+                                required>
+                            <option selected hidden value=""> Semester planen</option>
+                            <option th:each="semester : ${allSemesters}" th:value="${semester}" th:text="${semester}">
+                                Semester
+                            </option>
                         </select> <br>
-                        <button type="submit" class="btn btn-outline-primary">Speichern</button>
+                        <button type="submit" class="btn btn-outline-primary" onclick="return val()">Speichern</button>
                         <div class="accordion mt-3" id="accordion">
-                        <!---------------------------- Nullpointer Exception vermeiden------------------------------->
-                        <div class="form-group required" id="veranstaltungsIds">
-                            <input type="hidden" name="veranstaltungsIds" value="-1">
-                            <!---------------------------- -------------------------------------------------------------->
-                            <div th:each="category : ${allCategories}">
-                                <p>
-                                    <a class="btn btn-primary"
-                                       style="font-weight: bold;
+                            <div class="input" id="veranstaltungsIds">
+                                <div th:each="category : ${allCategories}">
+                                    <p>
+                                        <a class="btn btn-primary"
+                                           style="font-weight: bold;
                                 font-size: larger;
                                 border:none;
                                 background-color: transparent;
                                 color: dodgerblue"
-                                       data-toggle="collapse"
-                                       th:href="'#' + ${category} + 'tag'"
-                                       role="button"
-                                       aria-expanded="false"
-                                       th:attr="aria-controls=${category} + 'tag'">
-                                        <span th:text="${category.toReadable()}">Modulkategorien</span>
-                                    </a>
-                                </p>
-                                <div class="collapse" th:id="${category} + 'tag'">
-                                    <div class="card card-body pt-0" style="border: none">
-                                        <ul style="font-size: large; list-style-type: none">
-                                            <li th:each="modul : ${allVisibleModules}">
-                                                <div th:if="${modul.getModulkategorie().equals(category)}">
-                                                    <a data-toggle="collapse"
-                                                       th:href="'#modul'+${modul.getId()}"
-                                                       aria-expanded="true"
-                                                       th:aria-controls="'modul'+ ${modul.getId()}">
-                                                        <span style="color: dodgerblue" th:text="${modul.getTitelDeutsch()}"> Modulname</span>
-                                                    </a>
-                                                    <div th:id="'modul'+ ${modul.getId()}" class="collapse" data-parent="#accordion">
-                                                        <ul th:each="veranstaltungen : ${modul.getVeranstaltungen()}" style="display: flex">
-                                                            <li class="col-9" style="display: flex;">
+                                           data-toggle="collapse"
+                                           th:href="'#' + ${category} + 'tag'"
+                                           role="button"
+                                           aria-expanded="false"
+                                           th:attr="aria-controls=${category} + 'tag'">
+                                            <span th:text="${category.toReadable()}">Modulkategorien</span>
+                                        </a>
+                                    </p>
+                                    <div class="collapse" th:id="${category} + 'tag'">
+                                        <div class="card card-body pt-0" style="border: none">
+                                            <ul style="font-size: large; list-style-type: none">
+                                                <li th:each="modul : ${allVisibleModules}">
+                                                    <div th:if="${modul.getModulkategorie().equals(category)}">
+                                                        <a data-toggle="collapse"
+                                                           th:href="'#modul'+${modul.getId()}"
+                                                           aria-expanded="true"
+                                                           th:aria-controls="'modul'+ ${modul.getId()}">
+                                                            <span style="color: dodgerblue"
+                                                                  th:text="${modul.getTitelDeutsch()}"> Modulname</span>
+                                                        </a>
+                                                        <div th:id="'modul'+ ${modul.getId()}" class="collapse"
+                                                             data-parent="#accordion">
+                                                            <ul th:each="veranstaltungen : ${modul.getVeranstaltungen()}"
+                                                                style="display: flex">
+                                                                <li class="col-9" style="display: flex;">
                                                                 <span>
-                                                                    <input type="checkbox" name="veranstaltungsIds" th:value="${veranstaltungen.getId()}">
+                                                                    <input type="checkbox" name="veranstaltungsIds" value=""
+                                                                           th:value="${veranstaltungen.getId()}">
                                                                 </span>
-                                                                <span th:text="${veranstaltungen.getTitel()}">Eintrag</span>
-                                                                <span th:each="semesterTags : ${veranstaltungen.getSemester()}">
-                                                                    <span style="width: min-content; display: flex" class="badge badge-danger mr-2">
+                                                                    <span th:text="${veranstaltungen.getTitel()}">Eintrag</span>
+                                                                    <span th:each="semesterTags : ${veranstaltungen.getSemester()}">
+                                                                    <span style="width: min-content; display: flex"
+                                                                          class="badge badge-danger mr-2">
                                                                         <span th:text="${semesterTags}">Semester</span>
                                                                     </span>
                                                                 </span>
-                                                            </li>
-                                                        </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                     </form>
                 </div>
@@ -297,9 +315,10 @@
     </div>
 
     <!-- Modal, um Semesterplanung zu löschen -->
-    <div class="modal fade" id="ModalSemesterDelete" tabindex="-1" role="dialog" aria-labelledby="ModalSemesterLabelDelete"
+    <div class="modal fade" id="ModalSemesterDelete" tabindex="-1" role="dialog"
+         aria-labelledby="ModalSemesterLabelDelete"
          aria-hidden="true">
-        <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 class="modal-title" id="ModalSemesterLabelDelete">Semesterplanung löschen</h3>
@@ -308,20 +327,21 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                        <form method='get' action='/module/deletesemester'>
-                            <div class="input-group">
-                                <select name="semesterTag"
-                                        class="custom-select"
-                                        id="semesterTag" required>
-                                    <option selected hidden value=""> Wählen Sie ein Semester </option>
-                                    <option type="submit" th:each="semester : ${allSemesters}" th:value="${semester}" th:text="${semester}"> Semester
-                                    </option>
-                                </select>
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-primary" type="submit"> Fortfahren </button>
-                                </div>
+                    <form method='get' action='/module/deletesemester'>
+                        <div class="input-group">
+                            <select name="semesterTag"
+                                    class="custom-select"
+                                    id="semesterTag" required>
+                                <option selected hidden value=""> Wählen Sie ein Semester</option>
+                                <option type="submit" th:each="semester : ${allSemesters}" th:value="${semester}"
+                                        th:text="${semester}"> Semester
+                                </option>
+                            </select>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-primary" type="submit"> Fortfahren</button>
                             </div>
-                        </form>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -401,8 +421,9 @@
                     <div th:case="'sekretariat'" style="display: grid;">
                         <select type="button" class="btn btn-primary">
                             <option selected hidden value="">Semesterplanung</option>
-                            <option data-toggle="modal" data-target="#ModalSemester"> Semester planen </option>
-                            <option data-toggle="modal" data-target="#ModalSemesterDelete"> Semesterplanung löschen </option>
+                            <option data-toggle="modal" data-target="#ModalSemester"> Semester planen</option>
+                            <option data-toggle="modal" data-target="#ModalSemesterDelete"> Semesterplanung löschen
+                            </option>
                         </select>
                     </div>
                 </div>
