@@ -57,13 +57,13 @@
         <h3 class="ml-2" style="color: dodgerblue" th:text="${modul.getTitelEnglisch()}">
             ModulnameEnglisch
         </h3>
+        <div class="mt-2 col-lg-2 col-md-2 col-sm-12" style="float: left">
+            <span style="font-weight: bold">Leistungspunkte:</span>
+            <br>
+            <span style="width: min-content" class="badge badge-secondary" th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
+        </div>
         <hr class="my-4" style="background-color: white">
         <div>
-            <div class="mt-2 col-lg-2 col-md-2 col-sm-12" style="float: left">
-                <span style="font-weight: bold">Leistungspunkte:</span>
-                <br>
-                <span style="width: min-content" class="badge badge-secondary" th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
-            </div>
             <div class="mt-2 col-lg-3 col-md-3 col-sm-12" style="float: left">
                 <span style="font-weight: bold; padding-left: 1rem">Modulbeauftragte:</span>
                 <ul style="list-style-type: none; padding: inherit">
@@ -76,7 +76,7 @@
                 <span style="font-weight: bold">Studiengang:</span>
                 <div th:text="${modul.getStudiengang()}">Studiengang</div>
             </div>
-            <div class="mt-2 col-lg-4 col-md-4 col-sm-12" style="float: right">
+            <div class="mt-2 col-lg-5 col-md-5 col-sm-12" style="float: left">
                 <span style="font-weight: bold; padding-left: 1rem">Lehrformen:</span>
                 <ul th:each="veranstaltung : ${modul.getVeranstaltungen()}" style="list-style-type: none; padding: inherit">
                     <!--MIT SWS TAG OHNE MARKDOWN SUPPORT WENN != 0 SWS-->
@@ -98,9 +98,7 @@
                             Veranstaltungsform
                         </span>
                     </li>
-
                 </ul>
-
             </div>
         </div>
         <hr class="my-4" style="background-color: white">
@@ -119,7 +117,6 @@
                     <span style="width: min-content"
                           class="badge badge-secondary ml-1"
                           th:text="${veranstaltung.getLeistungspunkte()}">
-                        CP
                     </span>
                     <span th:each="semester : ${@modulService.filterSemestersForSearch(veranstaltung.getSemester())}" style="float:right">
                         <span class="card-text badge badge-danger"
