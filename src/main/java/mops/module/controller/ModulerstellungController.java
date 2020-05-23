@@ -2,8 +2,11 @@ package mops.module.controller;
 
 import static mops.module.keycloak.KeycloakMopsAccount.createAccountFromPrincipal;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.security.RolesAllowed;
-
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Antrag;
 import mops.module.database.Modul;
@@ -16,12 +19,9 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
+
 
 @Controller
 @SessionScope
@@ -34,27 +34,51 @@ public class ModulerstellungController {
 
 
     /**
+     * Fügt alle benötigten Attribute zum Model hinzu.
+     *
+     * @param model Modell für die HTML-Datei.
+     * @param token Der Token von keycloak für die Berechtigung.
+     */
+    @ModelAttribute
+    @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
+    public void addAttributes(Model model, KeycloakAuthenticationToken token) {
+        model.addAttribute("formatter", DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        model.addAttribute("account", createAccountFromPrincipal(token));
+        model.addAttribute("allCategories", Modulkategorie.values());
+        model.addAttribute("allModules", modulService.getAllModule());
+
+        List<Modul> allSichtbareModule = modulService.getAllSichtbareModule();
+        model.addAttribute("allVisibleModules", allSichtbareModule);
+
+        ArrayList<LinkedList<Modul>> allVersions =
+                antragService.getAllVersionsListFor(allSichtbareModule);
+        model.addAttribute("allVersions", allVersions);
+        ArrayList<LinkedList<Antrag>> allAntraege =
+                antragService.getAllAntraegeListFor(allSichtbareModule);
+        model.addAttribute("allAntraege", allAntraege);
+
+        List<String> semesterWahl = ModulService.getPastAndNextSemestersForTagging();
+        model.addAttribute("allSemesters", semesterWahl);
+    }
+
+
+    /**
      * Get-Mapping für das Generieren eines Modulerstellungsformulars für die eingegebene Anzahl
      * von Veranstaltungen.
      *
      * @param veranstaltungsanzahl Anzahl der Veranstaltungen.
      * @param model                Modell für die HTML-Datei.
-     * @param token                Der Token von keycloak für die Berechtigung.
      * @return View für die Modulerstellung.
      */
     @GetMapping("/modulerstellung")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulCreationAntragForm(
             @RequestParam(name = "veranstaltungsanzahl") int veranstaltungsanzahl,
-            Model model,
-            KeycloakAuthenticationToken token) {
+            Model model) {
 
         ModulWrapper modulWrapper =
                 ModulWrapperService.initializeEmptyWrapper(veranstaltungsanzahl);
-
-        model.addAttribute("allSemesters", modulService.getPastAndNextSemestersForTagging());
         model.addAttribute("modulWrapper", modulWrapper);
-        model.addAttribute("account", createAccountFromPrincipal(token));
 
         return "modulerstellung";
     }
@@ -64,17 +88,13 @@ public class ModulerstellungController {
      *
      * @param id    id des zu bearbeitenden Moduls.
      * @param model Modell für die HTML-Datei.
-     * @param token Keycloak-Token.
      * @return View für die Modulbearbeitung.
      */
     @GetMapping("/modulbearbeitung/{id}")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulModificationAntragForm(
             @PathVariable String id,
-            Model model,
-            KeycloakAuthenticationToken token) {
-        model.addAttribute("account", createAccountFromPrincipal(token));
-        model.addAttribute("allSemesters", modulService.getPastAndNextSemestersForTagging());
+            Model model) {
         Modul modul = modulService.getModulById(Long.parseLong(id));
         ModulWrapper modulWrapper = ModulWrapperService.initializePrefilledWrapper(modul);
         model.addAttribute("modulWrapper", modulWrapper);
@@ -88,18 +108,12 @@ public class ModulerstellungController {
      *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
      * @param model        Model für die HTML-Datei.
-     * @param token        Keycloak-Token.
      * @return View für die Modulvorschau.
      */
     @PostMapping("/modulerstellung_preview")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulCreationAntragPreview(ModulWrapper modulWrapper,
-                                             Model model,
-                                             KeycloakAuthenticationToken token) {
-
-        model.addAttribute("account", createAccountFromPrincipal(token));
-        model.addAttribute("allCategories", Modulkategorie.values());
-        model.addAttribute("allModules", modulService.getAllModule());
+                                             Model model) {
 
         Modul modul = ModulWrapperService.readModulFromWrapper(modulWrapper);
         model.addAttribute("modul", modul);
@@ -125,9 +139,6 @@ public class ModulerstellungController {
 
         String antragsteller = ((KeycloakPrincipal) token.getPrincipal()).getName();
         model.addAttribute("account", createAccountFromPrincipal(token));
-        model.addAttribute("allCategories", Modulkategorie.values());
-        model.addAttribute("allModules", modulService.getAllModule());
-
         Modul modul = ModulWrapperService.readModulFromWrapper(modulWrapper);
 
         Antrag antrag = antragService.addModulCreationAntrag(modul, antragsteller);
@@ -136,7 +147,6 @@ public class ModulerstellungController {
         }
 
         return "modulbeauftragter";
-
     }
 
     /**
@@ -145,14 +155,12 @@ public class ModulerstellungController {
      *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
      * @param model        Model für die HTML-Datei.
-     * @param token        Keycloak-Token.
      * @return View für die Modulerstellung.
      */
     @PostMapping("/modulerstellung_back_to_edit")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulCreationAntragBackToEdit(ModulWrapper modulWrapper,
-                                                Model model,
-                                                KeycloakAuthenticationToken token) {
+                                                Model model) {
 
         Modul modul = ModulWrapperService.readModulFromWrapper(modulWrapper);
 
@@ -160,10 +168,8 @@ public class ModulerstellungController {
                 ModulWrapperService.initializePrefilledWrapper(modul);
 
         model.addAttribute("modulWrapper", refilledModulWrapper);
-        model.addAttribute("account", createAccountFromPrincipal(token));
 
         return "modulerstellung";
-
     }
 
     /**
@@ -172,25 +178,18 @@ public class ModulerstellungController {
      *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
      * @param model        Model für die HTML-Datei.
-     * @param token        Keycloak-Token.
      * @return View für die Modulvorschau.
      */
     @PostMapping("/modulbearbeitung_preview")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulModificationAntragPreview(
             ModulWrapper modulWrapper,
-            Model model,
-            KeycloakAuthenticationToken token) {
-
-        model.addAttribute("account", createAccountFromPrincipal(token));
-        model.addAttribute("allCategories", Modulkategorie.values());
-        model.addAttribute("allModules", modulService.getAllModule());
+            Model model) {
 
         Modul modul = ModulWrapperService.readModulFromWrapper(modulWrapper);
         model.addAttribute("modul", modul);
         model.addAttribute("modulWrapper", modulWrapper);
         return "modulpreview";
-
     }
 
     /**
@@ -198,7 +197,6 @@ public class ModulerstellungController {
      * Antrags bei der der Bearbeitung eines Moduls.
      *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model        Model für die HTML-Datei.
      * @param token        Keycloak-Token.
      * @return Zurückleitung auf den "Module bearbeiten"-Reiter.
      */
@@ -206,13 +204,9 @@ public class ModulerstellungController {
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulModificationAntragConfirmation(
             ModulWrapper modulWrapper,
-            Model model,
             KeycloakAuthenticationToken token) {
 
         String antragsteller = ((KeycloakPrincipal) token.getPrincipal()).getName();
-        model.addAttribute("account", createAccountFromPrincipal(token));
-        model.addAttribute("allCategories", Modulkategorie.values());
-        model.addAttribute("allModules", modulService.getAllModule());
 
         Modul neuesModul = ModulWrapperService.readModulFromWrapper(modulWrapper);
         Long modulIdLong = modulWrapper.getModul().getId();
@@ -230,7 +224,6 @@ public class ModulerstellungController {
         }
 
         return "modulbeauftragter";
-
     }
 
     /**
@@ -239,14 +232,12 @@ public class ModulerstellungController {
      *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
      * @param model        Model für die HTML-Datei.
-     * @param token        Keycloak-Token.
      * @return View für die Modulbearbeitung.
      */
     @PostMapping("/modulbearbeitung_back_to_edit")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulModificationAntragBackToEdit(ModulWrapper modulWrapper,
-                                                    Model model,
-                                                    KeycloakAuthenticationToken token) {
+                                                    Model model) {
 
         Modul modul = ModulWrapperService.readModulFromWrapper(modulWrapper);
 
@@ -254,10 +245,7 @@ public class ModulerstellungController {
                 ModulWrapperService.initializePrefilledWrapper(modul);
 
         model.addAttribute("modulWrapper", refilledModulWrapper);
-        model.addAttribute("account", createAccountFromPrincipal(token));
-
         return "modulerstellung";
-
     }
 
 }
