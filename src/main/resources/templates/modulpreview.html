@@ -57,7 +57,9 @@
         <button form="buttonForm" type="submit" class="btn btn-secondary mr-1">
             Zurück zur Bearbeitung
         </button>
-        <button form="buttonForm" th:formaction="${'/module/' + ((modul.getId() == null || modul.getId().equals('')) ? 'modulerstellung_confirmation' : 'modulbearbeitung_confirmation')}" type="submit" class="btn btn-success mr-1">
+        <button form="buttonForm"
+                th:formaction="${'/module/' + ((modul.getId() == null || modul.getId().equals('')) ? 'modulerstellung_confirmation' : 'modulbearbeitung_confirmation')}"
+                type="submit" class="btn btn-success mr-1">
             <span th:if="${modul.getId() == null || modul.getId().equals('')}" th:text="Erstellung"></span>
             <span th:unless="${modul.getId() == null || modul.getId().equals('')}" th:text="Änderung"></span>
             <span th:if="${account.getRoles().contains('sekretariat')}" th:text=" bestätigen"></span>
@@ -77,7 +79,8 @@
             <div class="mt-2 col-lg-2 col-md-2 col-sm-12" style="float: left">
                 <span style="font-weight: bold">Leistungspunkte:</span>
                 <br>
-                <span style="width: min-content" class="badge badge-secondary" th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
+                <span style="width: min-content" class="badge badge-secondary"
+                      th:text="${modul.getGesamtLeistungspunkte()}">CP</span>
             </div>
             <div class="mt-2 col-lg-3 col-md-3 col-sm-12" style="float: left">
                 <span style="font-weight: bold; padding-left: 1rem">Modulbeauftragte:</span>
@@ -93,7 +96,8 @@
             </div>
             <div class="mt-2 col-lg-4 col-md-4 col-sm-12" style="float: right">
                 <span style="font-weight: bold; padding-left: 1rem">Lehrformen:</span>
-                <ul th:each="veranstaltung : ${modul.getVeranstaltungen()}" style="list-style-type: none; padding: inherit">
+                <ul th:each="veranstaltung : ${modul.getVeranstaltungen()}"
+                    style="list-style-type: none; padding: inherit">
                     <!--MIT SWS TAG OHNE MARKDOWN SUPPORT WENN != 0 SWS-->
                     <li th:each="veranstaltungsform : ${veranstaltung.getVeranstaltungsformen()}"
                         th:if="${veranstaltungsform.semesterWochenStunden != 0}">
@@ -172,7 +176,7 @@
                         <span class="card-subtitle" style="font-weight: bold">Häufigkeit</span>
                         <br>
                         <span class="card-text"
-                                  th:text="${veranstaltung.getBeschreibung().getHaeufigkeit()}">
+                              th:text="${veranstaltung.getBeschreibung().getHaeufigkeit()}">
                                 Häufigkeit
                         </span>
                     </div>
@@ -192,6 +196,8 @@
                                 Sprache
                         </span>
                     </div>
+
+
                 </div>
                 <div style="display: flex;">
                     <div class="mt-3 mb-3 pl-2 col-lg-4 col-md-4 col-sm-12">
@@ -240,7 +246,9 @@
             </div>
             <hr class="my-4" style="background-color: white">
 
-            <form id="buttonForm" th:action="@{${'/module/' + (modulWrapper.getModul().getId() == null || modulWrapper.getModul().getId().equals('') ? 'modulerstellung_back_to_edit' : 'modulbearbeitung_back_to_edit')}}" method="post" th:object="${modulWrapper}">
+            <form id="buttonForm"
+                  th:action="@{${'/module/' + (modulWrapper.getModul().getId() == null || modulWrapper.getModul().getId().equals('') ? 'modulerstellung_back_to_edit' : 'modulbearbeitung_back_to_edit')}}"
+                  method="post" th:object="${modulWrapper}">
                 <input type="hidden" th:field="*{modul.id}">
                 <input type="hidden" th:field="*{modul.titelDeutsch}">
                 <input type="hidden" th:field="*{modul.titelEnglisch}">
@@ -249,26 +257,29 @@
                 <input type="hidden" th:field="*{modul.gesamtLeistungspunkte}">
                 <input type="hidden" th:field="*{modul.modulkategorie}">
                 <div th:each="veranstaltung, i : *{veranstaltungen}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].id}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].titel}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].leistungspunkte}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.haeufigkeit}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.sprache}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.inhalte}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.lernergebnisse}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.literatur}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.verwendbarkeit}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].beschreibung.voraussetzungenBestehen}">
-                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].voraussetzungenTeilnahme}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].id}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].titel}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].leistungspunkte}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].beschreibung.haeufigkeit}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].beschreibung.sprache}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].semester}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].beschreibung.inhalte}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].beschreibung.lernergebnisse}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].beschreibung.literatur}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].beschreibung.verwendbarkeit}">
+                    <input type="hidden"
+                           th:field="*{veranstaltungen[__${i.index}__].beschreibung.voraussetzungenBestehen}">
+                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].voraussetzungenTeilnahme}">
                     <div th:each="veranstaltungsform, j : *{veranstaltungsformen[__${(i.index)}__]}">
-                        <input type ="hidden" th:field = "*{veranstaltungsformen[__${i.index}__][__${j.index}__].id}">
-                        <input type ="hidden" th:field = "*{veranstaltungsformen[__${i.index}__][__${j.index}__].form}">
-                        <input type ="hidden" th:field = "*{veranstaltungsformen[__${i.index}__][__${j.index}__].semesterWochenStunden}">
+                        <input type="hidden" th:field="*{veranstaltungsformen[__${i.index}__][__${j.index}__].id}">
+                        <input type="hidden" th:field="*{veranstaltungsformen[__${i.index}__][__${j.index}__].form}">
+                        <input type="hidden"
+                               th:field="*{veranstaltungsformen[__${i.index}__][__${j.index}__].semesterWochenStunden}">
                     </div>
                     <div th:each="zusatzfeld, k : *{zusatzfelder[__${(i.index)}__]}">
-                        <input type ="hidden" th:field = "*{zusatzfelder[__${i.index}__][__${k.index}__].id}">
-                        <input type ="hidden" th:field = "*{zusatzfelder[__${i.index}__][__${k.index}__].titel}">
-                        <input type ="hidden" th:field = "*{zusatzfelder[__${i.index}__][__${k.index}__].inhalt}">
+                        <input type="hidden" th:field="*{zusatzfelder[__${i.index}__][__${k.index}__].id}">
+                        <input type="hidden" th:field="*{zusatzfelder[__${i.index}__][__${k.index}__].titel}">
+                        <input type="hidden" th:field="*{zusatzfelder[__${i.index}__][__${k.index}__].inhalt}">
                     </div>
                 </div>
             </form>

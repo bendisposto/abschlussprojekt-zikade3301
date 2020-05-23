@@ -3,6 +3,7 @@ package mops.module.controller;
 import static mops.module.keycloak.KeycloakMopsAccount.createAccountFromPrincipal;
 
 import javax.annotation.security.RolesAllowed;
+
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Antrag;
 import mops.module.database.Modul;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.annotation.SessionScope;
 
-
 @Controller
 @SessionScope
 @RequiredArgsConstructor
@@ -36,9 +36,10 @@ public class ModulerstellungController {
     /**
      * Get-Mapping für das Generieren eines Modulerstellungsformulars für die eingegebene Anzahl
      * von Veranstaltungen.
+     *
      * @param veranstaltungsanzahl Anzahl der Veranstaltungen.
-     * @param model Modell für die HTML-Datei.
-     * @param token Der Token von keycloak für die Berechtigung.
+     * @param model                Modell für die HTML-Datei.
+     * @param token                Der Token von keycloak für die Berechtigung.
      * @return View für die Modulerstellung.
      */
     @GetMapping("/modulerstellung")
@@ -51,6 +52,7 @@ public class ModulerstellungController {
         ModulWrapper modulWrapper =
                 ModulWrapperService.initializeEmptyWrapper(veranstaltungsanzahl);
 
+        model.addAttribute("allSemesters", modulService.getPastAndNextSemestersForTagging());
         model.addAttribute("modulWrapper", modulWrapper);
         model.addAttribute("account", createAccountFromPrincipal(token));
 
@@ -59,7 +61,8 @@ public class ModulerstellungController {
 
     /**
      * Mapping für das Generieren eines Modulbearbeitungsformulars für die eingegebene Modul-Id.
-     * @param id id des zu bearbeitenden Moduls.
+     *
+     * @param id    id des zu bearbeitenden Moduls.
      * @param model Modell für die HTML-Datei.
      * @param token Keycloak-Token.
      * @return View für die Modulbearbeitung.
@@ -71,9 +74,9 @@ public class ModulerstellungController {
             Model model,
             KeycloakAuthenticationToken token) {
         model.addAttribute("account", createAccountFromPrincipal(token));
+        model.addAttribute("allSemesters", modulService.getPastAndNextSemestersForTagging());
         Modul modul = modulService.getModulById(Long.parseLong(id));
         ModulWrapper modulWrapper = ModulWrapperService.initializePrefilledWrapper(modul);
-
         model.addAttribute("modulWrapper", modulWrapper);
 
         return "modulerstellung";
@@ -82,9 +85,10 @@ public class ModulerstellungController {
     /**
      * Post-Mapping für das Anzeigen einer Vorschau für die eingegebenen Daten bei der der
      * Erstellung eines Moduls.
+     *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model Model für die HTML-Datei.
-     * @param token Keycloak-Token.
+     * @param model        Model für die HTML-Datei.
+     * @param token        Keycloak-Token.
      * @return View für die Modulvorschau.
      */
     @PostMapping("/modulerstellung_preview")
@@ -107,9 +111,10 @@ public class ModulerstellungController {
     /**
      * Post-Mapping für das Abschicken der eingegebenen Daten und Erstellung eines entsprechenden
      * Antrags bei der der Erstellung eines Moduls.
+     *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model Model für die HTML-Datei.
-     * @param token Keycloak-Token.
+     * @param model        Model für die HTML-Datei.
+     * @param token        Keycloak-Token.
      * @return Zurückleitung auf den "Module bearbeiten"-Reiter.
      */
     @PostMapping("/modulerstellung_confirmation")
@@ -118,7 +123,7 @@ public class ModulerstellungController {
                                              Model model,
                                              KeycloakAuthenticationToken token) {
 
-        String antragsteller = ((KeycloakPrincipal)token.getPrincipal()).getName();
+        String antragsteller = ((KeycloakPrincipal) token.getPrincipal()).getName();
         model.addAttribute("account", createAccountFromPrincipal(token));
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("allModules", modulService.getAllModule());
@@ -137,9 +142,10 @@ public class ModulerstellungController {
     /**
      * Post-Mapping für das Zurückkehren aus der Vorschau zum Formular mit den eingegebenen Daten
      * bei der der Erstellung eines Moduls.
+     *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model Model für die HTML-Datei.
-     * @param token Keycloak-Token.
+     * @param model        Model für die HTML-Datei.
+     * @param token        Keycloak-Token.
      * @return View für die Modulerstellung.
      */
     @PostMapping("/modulerstellung_back_to_edit")
@@ -163,17 +169,18 @@ public class ModulerstellungController {
     /**
      * Post-Mapping für das Anzeigen einer Vorschau für die eingegebenen Daten bei der der
      * Bearbeitung eines Moduls.
+     *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model Model für die HTML-Datei.
-     * @param token Keycloak-Token.
+     * @param model        Model für die HTML-Datei.
+     * @param token        Keycloak-Token.
      * @return View für die Modulvorschau.
      */
     @PostMapping("/modulbearbeitung_preview")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
-    public String modulModificationAntragPreview(//@RequestParam(name = "modulId") String modulId,
-                                         ModulWrapper modulWrapper,
-                                         Model model,
-                                         KeycloakAuthenticationToken token) {
+    public String modulModificationAntragPreview(
+            ModulWrapper modulWrapper,
+            Model model,
+            KeycloakAuthenticationToken token) {
 
         model.addAttribute("account", createAccountFromPrincipal(token));
         model.addAttribute("allCategories", Modulkategorie.values());
@@ -189,9 +196,10 @@ public class ModulerstellungController {
     /**
      * Post-Mapping für das Abschicken der eingegebenen Daten und Erstellung eines entsprechenden
      * Antrags bei der der Bearbeitung eines Moduls.
+     *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model Model für die HTML-Datei.
-     * @param token Keycloak-Token.
+     * @param model        Model für die HTML-Datei.
+     * @param token        Keycloak-Token.
      * @return Zurückleitung auf den "Module bearbeiten"-Reiter.
      */
     @PostMapping("/modulbearbeitung_confirmation")
@@ -201,7 +209,7 @@ public class ModulerstellungController {
             Model model,
             KeycloakAuthenticationToken token) {
 
-        String antragsteller = ((KeycloakPrincipal)token.getPrincipal()).getName();
+        String antragsteller = ((KeycloakPrincipal) token.getPrincipal()).getName();
         model.addAttribute("account", createAccountFromPrincipal(token));
         model.addAttribute("allCategories", Modulkategorie.values());
         model.addAttribute("allModules", modulService.getAllModule());
@@ -228,9 +236,10 @@ public class ModulerstellungController {
     /**
      * Post-Mapping für das Zurückkehren aus der Vorschau zum Formular mit den eingegebenen Daten
      * bei der der Bearbeitung eines Moduls.
+     *
      * @param modulWrapper Wrapper für ein Modul und seine Unter-Objekte
-     * @param model Model für die HTML-Datei.
-     * @param token Keycloak-Token.
+     * @param model        Model für die HTML-Datei.
+     * @param token        Keycloak-Token.
      * @return View für die Modulbearbeitung.
      */
     @PostMapping("/modulbearbeitung_back_to_edit")

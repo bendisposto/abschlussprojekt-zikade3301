@@ -20,8 +20,8 @@
         <script>
             // Diese Funktion öffnet das Modal, das das Formular beinhaltet
             // Sie wird beim Laden dieser View automatisch aufgerufen.
-            $(document).ready(function openWhenLoadingPage(){
-                    $('#formularModal').modal('show');
+            $(document).ready(function openWhenLoadingPage() {
+                $('#formularModal').modal('show');
             });
         </script>
     </th:block>
@@ -50,7 +50,9 @@
 <main th:fragment="bodycontent">
 
     <!-- Modal -->
-    <form action="#" th:action = "@{${'/module/' + (modulWrapper.modul.getId() == null ? 'modulerstellung_preview' : 'modulbearbeitung_preview')}}" method="post" th:object="${modulWrapper}">
+    <form action="#"
+          th:action="@{${'/module/' + (modulWrapper.modul.getId() == null ? 'modulerstellung_preview' : 'modulbearbeitung_preview')}}"
+          method="post" th:object="${modulWrapper}">
         <input type="hidden" th:field="*{modul.id}">
         <div class="modal"
              id="formularModal"
@@ -67,9 +69,13 @@
                 <div class="modal-content" style="height: 100%;">
 
                     <div class="modal-header">
-                        <h3 th:if="*{modul.getId() == null}" class="modal-title" th:id="exampleModalCenterTitle">Modulerstellung beantragen</h3>
-                        <h3 th:unless="*{modul.getId() == null}" class="modal-title" th:id="exampleModalCenterTitle">Moduländerung beantragen</h3>
-                        <h4>Hinweis: Die mit <span style="color: lightgreen; background-color: lightslategrey;">&nbsp;markdown&nbsp;</span> markierten Felder unterstützen auch Eingaben im <a href="http://de.wikipedia.org/wiki/Markdown">Markdown</a>-Format</h4>
+                        <h3 th:if="*{modul.getId() == null}" class="modal-title" th:id="exampleModalCenterTitle">
+                            Modulerstellung beantragen</h3>
+                        <h3 th:unless="*{modul.getId() == null}" class="modal-title" th:id="exampleModalCenterTitle">
+                            Moduländerung beantragen</h3>
+                        <h4>Hinweis: Die mit <span style="color: lightgreen; background-color: lightslategrey;">&nbsp;markdown&nbsp;</span>
+                            markierten Felder unterstützen auch Eingaben im <a
+                                    href="http://de.wikipedia.org/wiki/Markdown">Markdown</a>-Format</h4>
                     </div>
                     <div class="modal-body" style="padding: 0">
                         <div style="padding: 1rem; display: inline;">
@@ -101,7 +107,8 @@
 
                             <!-- AUSWAHL Studiengang -->
                             <div class="mt-3 mb-3" style="display: flex; padding-right: 1rem;">
-                                <label for="studiengang" class="col-2">Studiengang<span style="color: red;">*</span></label>
+                                <label for="studiengang" class="col-2">Studiengang<span
+                                        style="color: red;">*</span></label>
                                 <input type="text"
                                        th:field="*{modul.studiengang}"
                                        style="border: none;
@@ -122,13 +129,16 @@
                                        name="modulbeauftragte"
                                        class="form-control"
                                        id="modulbeauftragte"
-                                       placeholder="Modulbeauftragte der Veranstaltung (mehrere durch Kommata trennen)" required>
+                                       placeholder="Modulbeauftragte der Veranstaltung (mehrere durch Kommata trennen)"
+                                       required>
                             </div>
 
                             <!-- AUSWAHL LEISTUNGSPUNKTE UND MODULKATEGORIE -->
                             <div style="display: inline-flex;">
                                 <div class="mt-3 mb-3 col-5" style="float: left">
-                                    <label for="gesamtLeistungspunkte" class="col-md-8 col-sm-8 pl-0">Leistungspunkte<span style="color: red;">*</span></label>
+                                    <label for="gesamtLeistungspunkte"
+                                           class="col-md-8 col-sm-8 pl-0">Leistungspunkte<span
+                                            style="color: red;">*</span></label>
                                     <input type="text"
                                            th:field="*{modul.gesamtLeistungspunkte}"
                                            style="float: right;"
@@ -169,14 +179,17 @@
                                      border-radius: unset;
                                      background-color: white"
                                      th:each="veranstaltung, i : *{veranstaltungen}">
-                                    <input type="hidden" th:field = "*{veranstaltungen[__${i.index}__].id}">
-                                    <div class="card-header" th:id="'veranstaltung'+ ${i.index}+'heading'" style="background-color: white;">
+                                    <input type="hidden" th:field="*{veranstaltungen[__${i.index}__].id}">
+                                    <div class="card-header" th:id="'veranstaltung'+ ${i.index}+'heading'"
+                                         style="background-color: white;">
                                         <h2 class="mb-0">
                                             <a data-toggle="collapse"
                                                th:href="'#veranstaltung'+${i.index}"
                                                aria-expanded="true"
                                                th:aria-controls="'veranstaltung'+ ${i.index}">
-                                                <svg style="color: lightslategrey;" class="bi bi-caret-right-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                                <svg style="color: lightslategrey;" class="bi bi-caret-right-fill"
+                                                     width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+                                                     xmlns="http://www.w3.org/2000/svg">
                                                     <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 011.659-.753l5.48 4.796a1 1 0 010 1.506z"/>
                                                 </svg>
                                                 <span style="font-size: medium; font-weight: bold; color: lightslategrey; text-decoration: none"
@@ -197,7 +210,7 @@
                                             <div class="mt-3 mb-3" style="display: flex;">
                                                 <div class="input-group mb-3 col-8 pl-0" style="display: block">
                                                     <input type="text"
-                                                           th:field = "*{veranstaltungen[__${i.index}__].titel}"
+                                                           th:field="*{veranstaltungen[__${i.index}__].titel}"
                                                            class="form-control"
                                                            style="background: transparent;
                                                            color: white;
@@ -207,12 +220,13 @@
                                                            border-radius: unset;"
                                                            aria-label="Veranstaltungstitel"
                                                            aria-describedby="basic-addon1" required>
-                                                    <div style="color: white; font-size: small;">Veranstaltungstitel<span style="color: red;">*</span></div>
+                                                    <div style="color: white; font-size: small;">
+                                                        Veranstaltungstitel<span style="color: red;">*</span></div>
                                                 </div>
 
                                                 <div class="input-group mb-3 col-3" style="display: block">
                                                     <input type="text"
-                                                           th:field = "*{veranstaltungen[__${i.index}__].leistungspunkte}"
+                                                           th:field="*{veranstaltungen[__${i.index}__].leistungspunkte}"
                                                            style="background: transparent;
                                                            border: none;
                                                            border-bottom: 1px solid white;
@@ -220,14 +234,15 @@
                                                            color: white;"
                                                            class="form-control"
                                                            aria-describedby="basic-addon2" required>
-                                                    <div style="color: white; font-size: small;">Leistungspunkte<span style="color: red;">*</span></div>
+                                                    <div style="color: white; font-size: small;">Leistungspunkte<span
+                                                            style="color: red;">*</span></div>
                                                 </div>
                                             </div>
 
                                             <div class="input-group col-8 pl-0">
                                                 <div class="input-group mb-3 col-8 pl-0" style="display: block">
                                                     <input type="text"
-                                                           th:field = "*{veranstaltungen[__${i.index}__].beschreibung.haeufigkeit}"
+                                                           th:field="*{veranstaltungen[__${i.index}__].beschreibung.haeufigkeit}"
                                                            class="form-control"
                                                            style="background: transparent;
                                                            color: white;
@@ -237,11 +252,12 @@
                                                            border-radius: unset;"
                                                            aria-label="haeufigkeit"
                                                            aria-describedby="basic-addon1" required>
-                                                    <div style="color: white; font-size: small;">Häufigkeit<span style="color: red;">*</span></div>
+                                                    <div style="color: white; font-size: small;">Häufigkeit<span
+                                                            style="color: red;">*</span></div>
                                                 </div>
                                                 <div class="input-group mb-3 col-4 pl-0" style="display: block">
                                                     <input type="text"
-                                                           th:field = "*{veranstaltungen[__${i.index}__].beschreibung.sprache}"
+                                                           th:field="*{veranstaltungen[__${i.index}__].beschreibung.sprache}"
                                                            class="form-control"
                                                            style="background: transparent;
                                                            color: white;
@@ -254,6 +270,23 @@
                                                     <div style="color: white; font-size: small;">Sprache</div>
                                                 </div>
                                             </div>
+                                            <div>
+                                                <span class="input-group-text pl-0"
+                                                      style="background: transparent;
+                                                      color: white;
+                                                      font-size: larger;
+                                                      border: none;">
+                                                    Semestertags
+                                                </span>
+                                                <span>
+                                                    <div class="input-group" id="semesterTags" >
+                                                        <span th:each="semestertag : ${allSemesters}">
+                                                            <input type="checkbox" th:checked="true" name="semesterTags" th:value="${semestertag}" th:text="${semestertag}" th:field="*{veranstaltungen[__${i.index}__].semester}">
+                                                        </span>
+                                                    </div>
+                                                </span>
+                                            </div>
+                                            <br>
 
                                             <div class="input-group">
                                                 <div class="input-group-prepend col-12 pl-0">
@@ -262,11 +295,12 @@
                                                           color: white;
                                                           font-size: larger;
                                                           border: none;">
-                                                        Veranstaltungsinhalte<span style="color: red;">*</span><a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                        Veranstaltungsinhalte<span style="color: red;">*</span><a
+                                                            href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                     </span>
                                                 </div>
                                                 <textarea class="form-control col-12 pl-0"
-                                                          th:field = "*{veranstaltungen[__${i.index}__].beschreibung.inhalte}"
+                                                          th:field="*{veranstaltungen[__${i.index}__].beschreibung.inhalte}"
                                                           style="background: transparent;
                                                           border-radius: unset;
                                                           margin-bottom: 1rem;
@@ -281,11 +315,12 @@
                                                           color: white;
                                                           font-size: larger;
                                                           border: none;">
-                                                        Lernergebnisse<span style="color: red;">*</span><a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                        Lernergebnisse<span style="color: red;">*</span><a
+                                                            href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                     </span>
                                                 </div>
                                                 <textarea class="form-control col-12 pl-0"
-                                                          th:field = "*{veranstaltungen[__${i.index}__].beschreibung.lernergebnisse}"
+                                                          th:field="*{veranstaltungen[__${i.index}__].beschreibung.lernergebnisse}"
                                                           style="background: transparent;
                                                           border-radius: unset;
                                                           margin-bottom: 3rem;
@@ -300,11 +335,13 @@
                                                               color: white;
                                                               font-size: larger;
                                                               border: none;">
-                                                            Literatur<span style="color: red;">*</span><a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                            Literatur<span style="color: red;">*</span><a
+                                                                href="https://markdown.de/"
+                                                                style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                         </span>
                                                     </div>
                                                     <textarea class="form-control col-12 pl-0"
-                                                              th:field = "*{veranstaltungen[__${i.index}__].beschreibung.literatur}"
+                                                              th:field="*{veranstaltungen[__${i.index}__].beschreibung.literatur}"
                                                               style="background: transparent;
                                                               border-radius: unset;
                                                               margin-bottom: 3rem;
@@ -318,11 +355,13 @@
                                                               color: white;
                                                               font-size: larger;
                                                               border: none;">
-                                                            Voraussetzungen für eine Teilnahme<span style="color: red;">*</span><a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                            Voraussetzungen für eine Teilnahme<span style="color: red;">*</span><a
+                                                                href="https://markdown.de/"
+                                                                style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                         </span>
                                                     </div>
                                                     <textarea class="form-control col-12 pl-0"
-                                                              th:field = "*{veranstaltungen[__${i.index}__].voraussetzungenTeilnahme}"
+                                                              th:field="*{veranstaltungen[__${i.index}__].voraussetzungenTeilnahme}"
                                                               style="background: transparent;
                                                               border-radius: unset;
                                                               margin-bottom: 3rem;
@@ -338,11 +377,13 @@
                                                               color: white;
                                                               font-size: larger;
                                                               border: none;">
-                                                            Verwendbarkeit<span style="color: red;">*</span><a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                            Verwendbarkeit<span style="color: red;">*</span><a
+                                                                href="https://markdown.de/"
+                                                                style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                         </span>
                                                     </div>
                                                     <textarea class="form-control col-12 pl-0"
-                                                              th:field = "*{veranstaltungen[__${i.index}__].beschreibung.verwendbarkeit}"
+                                                              th:field="*{veranstaltungen[__${i.index}__].beschreibung.verwendbarkeit}"
                                                               style="background: transparent;
                                                               border-radius: unset;
                                                               margin-bottom: 3rem;
@@ -356,11 +397,14 @@
                                                               color: white;
                                                               font-size: larger;
                                                               border: none;">
-                                                            Voraussetzungen zum Bestehen<span style="color: red;">*</span><a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                            Voraussetzungen zum Bestehen<span
+                                                                style="color: red;">*</span><a
+                                                                href="https://markdown.de/"
+                                                                style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                         </span>
                                                     </div>
                                                     <textarea class="form-control col-12 pl-0"
-                                                              th:field = "*{veranstaltungen[__${i.index}__].beschreibung.voraussetzungenBestehen}"
+                                                              th:field="*{veranstaltungen[__${i.index}__].beschreibung.voraussetzungenBestehen}"
                                                               style="background: transparent;
                                                               border-radius: unset;
                                                               margin-bottom: 3rem;
@@ -370,52 +414,59 @@
 
                                             <div>
                                                 <span style="font-size: x-large; margin-bottom: 2rem">
-                                                    Die Veranstaltung beinhaltet:<a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                    Die Veranstaltung beinhaltet:<a href="https://markdown.de/"
+                                                                                    style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                 </span>
-                                                <div class="form-check mb-2" style="display: flex"  th:each="veranstaltungsform, j : *{veranstaltungsformen[__${(i.index)}__]}">
-                                                    <input type ="hidden" th:field = "*{veranstaltungsformen[__${i.index}__][__${j.index}__].id}">
-                                                        <textarea class="form-control ml-1"
-                                                               th:field = "*{veranstaltungsformen[__${i.index}__][__${j.index}__].form}"
-                                                               style=" border-bottom: 1px solid white;
+                                                <div class="form-check mb-2" style="display: flex"
+                                                     th:each="veranstaltungsform, j : *{veranstaltungsformen[__${(i.index)}__]}">
+                                                    <input type="hidden"
+                                                           th:field="*{veranstaltungsformen[__${i.index}__][__${j.index}__].id}">
+                                                    <textarea class="form-control ml-1"
+                                                              th:field="*{veranstaltungsformen[__${i.index}__][__${j.index}__].form}"
+                                                              style=" border-bottom: 1px solid white;
                                                                max-width: 15rem;
                                                                background: transparent;
                                                                font-size: small;
                                                                color: white;"
-                                                               type="text"
-                                                               value=""></textarea>
-                                                        <span style="font-size: larger; color: white; margin-left: 0.5rem">mit</span>
-                                                        <input class="form-control ml-1"
-                                                               th:field = "*{veranstaltungsformen[__${i.index}__][__${j.index}__].semesterWochenStunden}"
-                                                               style="max-width: 6rem;
+                                                              type="text"
+                                                              value=""></textarea>
+                                                    <span style="font-size: larger; color: white; margin-left: 0.5rem">mit</span>
+                                                    <input class="form-control ml-1"
+                                                           th:field="*{veranstaltungsformen[__${i.index}__][__${j.index}__].semesterWochenStunden}"
+                                                           style="max-width: 6rem;
                                                            background: transparent;
                                                            font-size: small;
                                                            color: white;"
-                                                               type="number"
-                                                               value=""
-                                                               required
-                                                               min="0">
-                                                        <label style="font-size: larger; margin-left: 0.5rem">
-                                                            SWS <small>(wenn keine Angabe, 0 angeben)</small>
-                                                        </label>
+                                                           type="number"
+                                                           value=""
+                                                           required
+                                                           min="0">
+                                                    <label style="font-size: larger; margin-left: 0.5rem">
+                                                        SWS <small>(wenn keine Angabe, 0 angeben)</small>
+                                                    </label>
                                                 </div>
                                             </div>
 
                                             <div style="margin-top: 3rem; display: grid;">
                                                 <span class="col-12" style="font-size: x-large">
-                                                    Weitere Informationen:<a href="https://markdown.de/" style="color: lightgreen;"><SUP>markdown</SUP></a>
+                                                    Weitere Informationen:<a href="https://markdown.de/"
+                                                                             style="color: lightgreen;"><SUP>markdown</SUP></a>
                                                 </span>
                                                 <div class="col-12" style="padding: 0;">
-                                                    <div class="col-6" style="float:left" th:each="zusatzfeld, k : *{zusatzfelder[__${(i.index)}__]}">
-                                                        <input type ="hidden" th:field = "*{zusatzfelder[__${i.index}__][__${k.index}__].id}">
+                                                    <div class="col-6" style="float:left"
+                                                         th:each="zusatzfeld, k : *{zusatzfelder[__${(i.index)}__]}">
+                                                        <input type="hidden"
+                                                               th:field="*{zusatzfelder[__${i.index}__][__${k.index}__].id}">
                                                         <div class="form-check mb-2"
                                                              style="padding: 0;
                                                              margin:0.3rem;
                                                              border: 1px solid white;
                                                              border-radius: 10px">
                                                             <div class="col-12" style="padding: 0">
-                                                                <div style="border-bottom: 1px solid white" class="col-12">
+                                                                <div style="border-bottom: 1px solid white"
+                                                                     class="col-12">
                                                                     <input placeholder="Titel Ihres Zusatzfeldes ..."
-                                                                           th:field = "*{zusatzfelder[__${i.index}__][__${k.index}__].titel}"
+                                                                           th:field="*{zusatzfelder[__${i.index}__][__${k.index}__].titel}"
                                                                            type="text"
                                                                            class="col-11"
                                                                            style="border: none;
@@ -425,7 +476,7 @@
                                                                            checked>
                                                                 </div>
                                                                 <textarea class="form-control ml-1 col-12"
-                                                                          th:field = "*{zusatzfelder[__${i.index}__][__${k.index}__].inhalt}"
+                                                                          th:field="*{zusatzfelder[__${i.index}__][__${k.index}__].inhalt}"
                                                                           placeholder="Inhalt Ihres Zusatzfeldes ..."
                                                                           style="height: 5rem;
                                                                           border: none;
