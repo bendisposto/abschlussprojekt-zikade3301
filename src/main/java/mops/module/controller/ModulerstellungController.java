@@ -6,7 +6,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
+import javax.validation.ConstraintViolationException;
+import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Antrag;
 import mops.module.database.Modul;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
@@ -73,7 +77,9 @@ public class ModulerstellungController {
     @GetMapping("/modulerstellung")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
     public String modulCreationAntragForm(
-            @RequestParam(name = "veranstaltungsanzahl") int veranstaltungsanzahl,
+            @RequestParam(name = "veranstaltungsanzahl")
+            @Min(value = 1, message = "Veranstaltungszahl muss mindestens 1 sein!")
+                    int veranstaltungsanzahl,
             Model model) {
 
         ModulWrapper modulWrapper =
@@ -248,4 +254,23 @@ public class ModulerstellungController {
         return "modulerstellung";
     }
 
+    /**
+     * ExceptionHandler, der bei falscher Eingabe Fehlerseite zurückgibt.
+     *
+     * @param exeption Die Fehlermeldung, die durch die fehlerhafte Eingabe erzeugt wird
+     * @return View error
+     */
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleError(ConstraintViolationException exeption) {
+        ModelAndView modelAndView = new ModelAndView();
+        List<String> exceptions =
+                exeption.getConstraintViolations()
+                        .parallelStream()
+                        .map(x -> x.getMessageTemplate())
+                        .collect(Collectors.toList());
+
+        modelAndView.addObject("exceptions", exceptions);
+        modelAndView.setViewName("error");
+        return modelAndView;
+    }
 }
