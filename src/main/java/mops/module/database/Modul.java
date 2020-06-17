@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import mops.module.searchconfig.IndexWhenVisibleInterceptor;
@@ -28,9 +30,11 @@ public class Modul {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Modultitel kann nicht leer sein")
     @Field
     private String titelDeutsch;
 
+    @NotBlank(message = "Englischer Modultitel kann nicht leer sein")
     @Field
     private String titelEnglisch;
 
@@ -40,14 +44,18 @@ public class Modul {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "modul")
     private Set<Veranstaltung> veranstaltungen;
 
+    @NotBlank(message = "Modulbeauftragter kann nicht leer sein")
     @Field
     private String modulbeauftragte;
 
+    @NotBlank(message = "Leistungspunkte kann nicht leer sein")
     private String gesamtLeistungspunkte;
 
+    @NotBlank(message = "Studiengang kann nicht leer sein")
     @Field
     private String studiengang;
 
+    @NotNull(message = "Geben Sie die Modulkategorie an!")
     private Modulkategorie modulkategorie;
 
     private Boolean sichtbar;

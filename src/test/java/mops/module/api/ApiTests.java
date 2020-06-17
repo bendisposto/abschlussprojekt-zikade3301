@@ -39,6 +39,7 @@ public class ApiTests {
     GraphQlProvider mockedGraphQlProvider;
     String testmodul1;
     String testmodul2;
+    String testmodul3;
 
     @Autowired
     private ModulSnapshotRepository modulSnapshotRepository;
@@ -55,8 +56,41 @@ public class ApiTests {
                 + "'veranstaltungen':[{'leistungspunkte':'5CP',"
                 + "'beschreibung':{'inhalte':'Lorem'}}],"
                 + "'modulkategorie':'MASTERARBEIT'}";
-        testmodul2 = "{'datumErstellung':{'date':{'year':2011,'month':11,'day':11},"
-                + "'time':{'hour':11,'minute':11,'second':11,'nano':0}}}";
+        testmodul2 = "{'titelDeutsch':'Betriebssysteme',"
+                + "'titelEnglisch':'Operating systems',"
+                + "'datumErstellung':{'date':{'year':2011,'month':11,'day':11},"
+                + "'time':{'hour':11,'minute':11,'second':11,'nano':0}},"
+                + "'veranstaltungen':[{'titel':'Vorlesung Betriebssysteme',"
+                + "'leistungspunkte':'10CP'"
+                + ",'veranstaltungsformen':[{'form':'Vorlesung','semesterWochenStunden':4},"
+                + "{'form':'Übung','semesterWochenStunden':2}],"
+                + "'beschreibung':{'inhalte':'Inhalte','lernergebnisse':'Synchronisierung',"
+                + "'literatur':'Alter Schinken','verwendbarkeit':'Überall verwendbar',"
+                + "'voraussetzungenBestehen':'50% der Punkte in der Klausur',"
+                + "'haeufigkeit':'Alle 2 Semester','sprache':'Deutsch'},"
+                + "'voraussetzungenTeilnahme':'Informatik I',"
+                + "'zusatzfelder':[{'titel':'Zusatzfeld2',"
+                + "'inhalt':'Dies hier ist das zweite Zusatzfeld!'},"
+                + "{'titel':'Zusatzfeld1','inhalt':'Dies hier ist das erste Zusatzfeld!'}]}],"
+                + "'modulbeauftragte':'Michael Schöttner','gesamtLeistungspunkte':'10CP',"
+                + "'studiengang':'Informatik','modulkategorie':'MASTERARBEIT'}" ;
+        testmodul3 = "{'titelDeutsch':'Betriebssysteme'," +
+                "'titelEnglisch':'Operating systems',"
+                + "'veranstaltungen':[{'titel':'Vorlesung Betriebssysteme'," +
+                "'leistungspunkte':'10CP'"
+                + ",'veranstaltungsformen':[{'form':'Vorlesung','semesterWochenStunden':4},"
+                + "{'form':'Übung','semesterWochenStunden':2}],"
+                + "'beschreibung':{'inhalte':'Inhalte','lernergebnisse':'Synchronisierung',"
+                + "'literatur':'Alter Schinken','verwendbarkeit':'Überall verwendbar',"
+                + "'voraussetzungenBestehen':'50% der Punkte in der Klausur',"
+                + "'haeufigkeit':'Alle 2 Semester','sprache':'Deutsch'},"
+                + "'voraussetzungenTeilnahme':'Informatik I',"
+                + "'zusatzfelder':[{'titel':'Zusatzfeld2',"
+                + "'inhalt':'Dies hier ist das zweite Zusatzfeld!'},"
+                + "{'titel':'Zusatzfeld1','inhalt':'Dies hier ist das erste Zusatzfeld!'}]}],"
+                + "'modulbeauftragte':'Michael Schöttner','gesamtLeistungspunkte':'10CP',"
+                + "'studiengang':'Informatik','modulkategorie':'MASTERARBEIT'}";
+
         Modul modul1 = JsonService.jsonObjectToModul(testmodul1);
 
         GraphQlDataFetchers graphQlDataFetchers = mock(GraphQlDataFetchers.class);
@@ -111,10 +145,10 @@ public class ApiTests {
 
     @Test
     public void graphQlRestTest() throws Exception {
-        Modul modul1 = JsonService.jsonObjectToModul(testmodul1);
-        modulSnapshotRepository.save(modul1);
+        Modul modul3 = JsonService.jsonObjectToModul(testmodul3);
+        modulSnapshotRepository.save(modul3);
 
-        String query = String.format("{modulById(id:%d){titelDeutsch}}", modul1.getId());
+        String query = String.format("{modulById(id:%d){titelDeutsch}}", modul3.getId());
 
         MvcResult mvcResult = mvc.perform(get("/module/api")
                 .param("query", query))

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import mops.module.database.Antrag;
@@ -22,11 +23,13 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.SessionScope;
 import org.springframework.web.servlet.ModelAndView;
 
-
+@Validated
 @Controller
 @SessionScope
 @RequiredArgsConstructor
@@ -118,7 +121,7 @@ public class ModulerstellungController {
      */
     @PostMapping("/modulerstellung_preview")
     @RolesAllowed({"ROLE_orga", "ROLE_sekretariat"})
-    public String modulCreationAntragPreview(ModulWrapper modulWrapper,
+    public String modulCreationAntragPreview(@Valid ModulWrapper modulWrapper,
                                              Model model) {
 
         Modul modul = ModulWrapperService.readModulFromWrapper(modulWrapper);
@@ -255,12 +258,12 @@ public class ModulerstellungController {
     }
 
     /**
-     * ExceptionHandler, der bei falscher Eingabe Fehlerseite zurückgibt.
+     * ExceptionHandler, der bei falscher Eingabe (Veranstaltungsanzahl) Fehlerseite zurückgibt.
      *
      * @param exeption Die Fehlermeldung, die durch die fehlerhafte Eingabe erzeugt wird
      * @return View error
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(ConstraintViolationException.class)
     public ModelAndView handleError(ConstraintViolationException exeption) {
         ModelAndView modelAndView = new ModelAndView();
         List<String> exceptions =
@@ -269,6 +272,25 @@ public class ModulerstellungController {
                         .map(x -> x.getMessageTemplate())
                         .collect(Collectors.toList());
 
+        modelAndView.addObject("exceptions", exceptions);
+        modelAndView.setViewName("error");
+        return modelAndView;
+    }
+
+    /**
+     * ExceptionHandler, der bei falscher Eingabe bei Modulerstellung Fehlerseite zurückgibt.
+     *
+     * @param bindException Die Fehlermeldung, die durch die fehlerhafte Eingabe erzeugt wird
+     * @return View error
+     */
+    @ExceptionHandler(BindException.class)
+    public ModelAndView handleBindException(BindException bindException) {
+        ModelAndView modelAndView = new ModelAndView();
+        List<String> exceptions =
+                bindException.getAllErrors()
+                        .parallelStream()
+                        .map(x -> x.getDefaultMessage())
+                        .collect(Collectors.toList());
         modelAndView.addObject("exceptions", exceptions);
         modelAndView.setViewName("error");
         return modelAndView;

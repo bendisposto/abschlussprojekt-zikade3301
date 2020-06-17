@@ -70,16 +70,50 @@ public class ModulServiceDatabaseTest {
         antragRepository.deleteAll();
         modulSnapshotRepository.deleteAll();
 
-        modul1 = "{'veranstaltungen':[{'leistungspunkte':'5CP'}],"
-                + "'modulkategorie':'MASTERARBEIT'}";
+        modul1 = "{'titelDeutsch':'Veränderter Titel','titelEnglisch':'Operating systems',"
+                + "'veranstaltungen':[{'titel':'Vorlesung Betriebssysteme','leistungspunkte':'10CP'"
+                + ",'veranstaltungsformen':[{'form':'Vorlesung','semesterWochenStunden':4},"
+                + "{'form':'Übung','semesterWochenStunden':2}],"
+                + "'beschreibung':{'inhalte':'Inhalte','lernergebnisse':'Synchronisierung',"
+                + "'literatur':'Alter Schinken','verwendbarkeit':'Überall verwendbar',"
+                + "'voraussetzungenBestehen':'50% der Punkte in der Klausur',"
+                + "'haeufigkeit':'Alle 2 Semester','sprache':'Deutsch'},"
+                + "'voraussetzungenTeilnahme':'Informatik I',"
+                + "'zusatzfelder':[{'titel':'Zusatzfeld2',"
+                + "'inhalt':'Dies hier ist das zweite Zusatzfeld!'},"
+                + "{'titel':'Zusatzfeld1','inhalt':'Dies hier ist das erste Zusatzfeld!'}]}],"
+                + "'modulbeauftragte':'Michael Schöttner','gesamtLeistungspunkte':'10CP',"
+                + "'studiengang':'Informatik','modulkategorie':'MASTERARBEIT'}";
         modul2 = "{'veranstaltungen':[{'leistungspunkte':'5CP'}],"
                 + "'modulkategorie':'BACHELORARBEIT'}";
-        modul3 = "{'veranstaltungen':[{'leistungspunkte':'5CP',"
-                + "'beschreibung':{'inhalte':'Lorem ipsum'}}],"
-                + "'modulkategorie':'MASTERARBEIT'}";
-        modul4 = "{'veranstaltungen':[{'leistungspunkte':'5CP',"
-                + "'beschreibung':{'inhalte':'Lorem ipsum'}}],"
-                + "'modulkategorie':'BACHELORARBEIT'}";
+        modul3 = "{'titelDeutsch':'Veränderter Titel','titelEnglisch':'Operating systems',"
+                + "'veranstaltungen':[{'titel':'Vorlesung Betriebssysteme','leistungspunkte':'10CP'"
+                + ",'veranstaltungsformen':[{'form':'Vorlesung','semesterWochenStunden':4},"
+                + "{'form':'Übung','semesterWochenStunden':2}],"
+                + "'beschreibung':{'inhalte':'Inhalte','lernergebnisse':'Synchronisierung',"
+                + "'literatur':'Alter Schinken','verwendbarkeit':'Überall verwendbar',"
+                + "'voraussetzungenBestehen':'50% der Punkte in der Klausur',"
+                + "'haeufigkeit':'Alle 2 Semester','sprache':'Deutsch'},"
+                + "'voraussetzungenTeilnahme':'Informatik I',"
+                + "'zusatzfelder':[{'titel':'Zusatzfeld2',"
+                + "'inhalt':'Dies hier ist das zweite Zusatzfeld!'},"
+                + "{'titel':'Zusatzfeld1','inhalt':'Dies hier ist das erste Zusatzfeld!'}]}],"
+                + "'modulbeauftragte':'Michael Schöttner','gesamtLeistungspunkte':'10CP',"
+                + "'studiengang':'Informatik','modulkategorie':'WAHLPFLICHT_BA'}";
+        modul4 = "{'titelDeutsch':'test','titelEnglisch':'Operating systems',"
+                + "'veranstaltungen':[{'titel':'Vorlesung Betriebssysteme','leistungspunkte':'10CP'"
+                + ",'veranstaltungsformen':[{'form':'Vorlesung','semesterWochenStunden':4},"
+                + "{'form':'Übung','semesterWochenStunden':2}],"
+                + "'beschreibung':{'inhalte':'Inhalte','lernergebnisse':'Synchronisierung',"
+                + "'literatur':'Alter Schinken','verwendbarkeit':'Überall verwendbar',"
+                + "'voraussetzungenBestehen':'50% der Punkte in der Klausur',"
+                + "'haeufigkeit':'Alle 2 Semester','sprache':'Deutsch'},"
+                + "'voraussetzungenTeilnahme':'Informatik I',"
+                + "'zusatzfelder':[{'titel':'Zusatzfeld2',"
+                + "'inhalt':'Dies hier ist das zweite Zusatzfeld!'},"
+                + "{'titel':'Zusatzfeld1','inhalt':'Dies hier ist das erste Zusatzfeld!'}]}],"
+                + "'modulbeauftragte':'Michael Schöttner','gesamtLeistungspunkte':'10CP',"
+                + "'studiengang':'Informatik','modulkategorie':'WAHLPFLICHT_BA'}";
         diffs1 = "{'modulkategorie':'BACHELORARBEIT'}";
         diffs2 = "{'veranstaltungen':[{'id':3,"
                 + "'voraussetzungenTeilnahme':[{'titel':'test'}]}],"
@@ -126,6 +160,11 @@ public class ModulServiceDatabaseTest {
     @Test
     public void approveModulCreationAntragTestFullRoutine() {
         Modul vergleichsmodul = new Modul();
+        vergleichsmodul.setTitelDeutsch("testmodul");
+        vergleichsmodul.setTitelEnglisch("testmodul");
+        vergleichsmodul.setStudiengang("teststudiengang");
+        vergleichsmodul.setModulbeauftragte("testmodulbeauftragte");
+        vergleichsmodul.setGesamtLeistungspunkte("1000");
         vergleichsmodul.setModulkategorie(Modulkategorie.MASTERARBEIT);
         Veranstaltung veranstaltung = new Veranstaltung();
         veranstaltung.setLeistungspunkte("5CP");

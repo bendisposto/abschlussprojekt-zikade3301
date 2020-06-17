@@ -1,6 +1,7 @@
 package mops.module.wrapper;
 
 import java.util.List;
+import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import mops.module.database.Modul;
@@ -12,6 +13,7 @@ import mops.module.database.Zusatzfeld;
 @AllArgsConstructor
 public class ModulWrapper {
 
+    @Valid
     Modul modul;
     public List<Veranstaltung> veranstaltungen;
     public List<Veranstaltungsform> [] veranstaltungsformen;
