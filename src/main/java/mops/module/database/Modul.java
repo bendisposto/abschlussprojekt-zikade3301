@@ -26,6 +26,34 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Indexed(interceptor = IndexWhenVisibleInterceptor.class)
 public class Modul {
 
+    public Modul(){
+
+    }
+
+    /**
+     * Konstruktor in dem Felder gesetzt werden, die nicht leer sein dürfen.
+     *
+     * @param titelDeutsch deutscher Modultitel
+     * @param titelEnglisch englischer Modultitel
+     * @param modulbeauftragte die Modulbeauftragte
+     * @param gesamtLeistungspunkte Leistungspunkte für dieses Modul
+     * @param studiengang Studiengang, dem Modul zugeordnet wird
+     * @param modulkategorie Modulkategorie
+     */
+    public Modul(String titelDeutsch,
+                 String titelEnglisch,
+                 String modulbeauftragte,
+                 String gesamtLeistungspunkte,
+                 String studiengang,
+                 Modulkategorie modulkategorie) {
+        this.titelDeutsch = titelDeutsch;
+        this.titelEnglisch = titelEnglisch;
+        this.modulbeauftragte = modulbeauftragte;
+        this.gesamtLeistungspunkte = gesamtLeistungspunkte;
+        this.studiengang = studiengang;
+        this.modulkategorie = modulkategorie;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

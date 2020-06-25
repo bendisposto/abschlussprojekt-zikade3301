@@ -159,18 +159,24 @@ public class ModulServiceDatabaseTest {
 
     @Test
     public void approveModulCreationAntragTestFullRoutine() {
-        Modul vergleichsmodul = new Modul();
-        vergleichsmodul.setTitelDeutsch("testmodul");
-        vergleichsmodul.setTitelEnglisch("testmodul");
-        vergleichsmodul.setStudiengang("teststudiengang");
-        vergleichsmodul.setModulbeauftragte("testmodulbeauftragte");
-        vergleichsmodul.setGesamtLeistungspunkte("1000");
-        vergleichsmodul.setModulkategorie(Modulkategorie.MASTERARBEIT);
-        Veranstaltung veranstaltung = new Veranstaltung();
-        veranstaltung.setLeistungspunkte("5CP");
-        Veranstaltungsbeschreibung veranstaltungsbeschreibung = new Veranstaltungsbeschreibung();
-        veranstaltungsbeschreibung.setInhalte("Hier sind Inhalte");
-        veranstaltung.setBeschreibung(veranstaltungsbeschreibung);
+        Modul vergleichsmodul = new Modul(
+                "testmodul",
+                "testmodul",
+                "testmodulbeauftragte",
+                "1000",
+                "teststudiengang",
+                Modulkategorie.MASTERARBEIT);
+        Veranstaltungsbeschreibung veranstaltungsbeschreibung = new Veranstaltungsbeschreibung(
+                "testinhalte",
+                "testlernergebnisse",
+                "testliteratur",
+                "testverwendbarkeit" ,
+                "testvoraussetzung",
+                "100");
+        Veranstaltung veranstaltung = new Veranstaltung(
+                "testtitel",
+                "testlp", veranstaltungsbeschreibung,
+                "testvoraussetzung");
         vergleichsmodul.addVeranstaltung(veranstaltung);
 
         Antrag antrag = antragService.addModulCreationAntrag(vergleichsmodul,

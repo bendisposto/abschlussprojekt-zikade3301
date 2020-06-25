@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import mops.module.database.Modul;
 import mops.module.database.Veranstaltung;
+import mops.module.database.Veranstaltungsbeschreibung;
 import mops.module.generator.ModulFaker;
 import mops.module.repositories.ModulSnapshotRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -29,13 +30,19 @@ public class SuchServiceTest {
     private Modul fakeModulBetriebssysteme;
     private Modul fakeModulProgrammierung;
     private Modul fakeInvisibleModulProgrammierung;
+    private Veranstaltungsbeschreibung testVeranstaltungsbeschreibung = new Veranstaltungsbeschreibung("testinhalte", "testlernergebnisse", "testliteratur", "testverwendbarkeit" , "testvoraussetzung", "100");
+    private Veranstaltung testVeranstaltung = new Veranstaltung("testtitel", "testlp" , testVeranstaltungsbeschreibung, "testvoraussetzung");
+
 
     @BeforeEach
     void init() {
         fakeModulBetriebssysteme = ModulFaker.generateFakeModul();
         fakeModulBetriebssysteme.setTitelDeutsch("Betriebssysteme");
         fakeModulBetriebssysteme.setTitelEnglisch("Operating systems");
-        fakeModulBetriebssysteme.setVeranstaltungen(new HashSet<>());
+        HashSet<Veranstaltung> veranstaltungen = new HashSet();
+        veranstaltungen.add(testVeranstaltung);
+        fakeModulBetriebssysteme.setVeranstaltungen(veranstaltungen);
+
 
         fakeModulProgrammierung = ModulFaker.generateFakeModul();
         fakeModulProgrammierung.setTitelDeutsch("Programmierung");

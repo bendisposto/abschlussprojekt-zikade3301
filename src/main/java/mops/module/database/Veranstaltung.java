@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +38,24 @@ public class Veranstaltung {
         zusatzfelder = new HashSet<>();
     }
 
+    /**
+     *  Konstruktor in dem Felder gesetzt werden, die nicht leer sein dürfen.
+     * @param titel Veranstaltungstitel
+     * @param leistungspunkte Leistungspunkte für Veranstaltung
+     * @param beschreibung Beschreibung der Veranstaltung
+     * @param voraussetzungenTeilnahme Teilnahmevoraussetzungen
+     */
+    public Veranstaltung(
+            String titel,
+            String leistungspunkte,
+            Veranstaltungsbeschreibung beschreibung,
+            String voraussetzungenTeilnahme) {
+        this.titel = titel;
+        this.leistungspunkte = leistungspunkte;
+        this.beschreibung = beschreibung;
+        this.voraussetzungenTeilnahme = voraussetzungenTeilnahme;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,9 +67,11 @@ public class Veranstaltung {
     @JoinColumn(name = "modul_id")
     private Modul modul;
 
+    @NotBlank(message = "Veranstaltungstitel kann nicht leer sein")
     @Field
     private String titel;
 
+    @NotBlank(message = "Leistungspunkte kann nicht leer sein")
     private String leistungspunkte;
 
     //Beim Löschen von Veranstaltung werden alle Veranstaltungsformen mitgelöscht
@@ -59,8 +81,10 @@ public class Veranstaltung {
 
     @Embedded
     @IndexedEmbedded
+    @Valid
     private Veranstaltungsbeschreibung beschreibung;
 
+    @NotBlank(message = "Voraussetzungsteilnahme kann nicht leer sein")
     @Field
     @Column(length = 10000)
     private String voraussetzungenTeilnahme;

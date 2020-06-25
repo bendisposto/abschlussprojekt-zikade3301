@@ -15,8 +15,8 @@ public class ModulWrapper {
 
     @Valid
     Modul modul;
-    public List<Veranstaltung> veranstaltungen;
-    public List<Veranstaltungsform> [] veranstaltungsformen;
+    public List<@Valid Veranstaltung> veranstaltungen;
+    public List<@Valid Veranstaltungsform> [] veranstaltungsformen;
     public List<Zusatzfeld> [] zusatzfelder;
 
 }
